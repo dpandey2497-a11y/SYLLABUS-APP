@@ -977,17 +977,6 @@
                     </div>`;
             }
 
-            // Next Revision Overdue check
-            const todayStr = new Date().toISOString().split('T')[0];
-            let revisionHighlight = 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300';
-            if (topic.nextRevision) {
-                if (topic.nextRevision <= todayStr) {
-                    revisionHighlight = 'border-rose-400 dark:border-rose-600 bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-300 font-bold ring-1 ring-rose-400/40';
-                } else {
-                    revisionHighlight = 'border-teal-300 dark:border-teal-700 bg-teal-50/40 dark:bg-teal-950/30 text-teal-700 dark:text-teal-300';
-                }
-            }
-
             div.className = `flex flex-col lg:flex-row lg:items-center justify-between p-3.5 sm:p-4 rounded-xl border ${cardClass} transition-all gap-3 select-none hover:shadow-sm`;
             
             div.innerHTML = `
@@ -1000,22 +989,22 @@
                 <!-- Right: Date Pickers, Priority & Status -->
                 <div class="flex flex-wrap items-center gap-2 sm:gap-3 flex-shrink-0 self-end lg:self-center">
                     
-                    <!-- Last Studied Calendar -->
-                    <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/80 text-xs shadow-xs" title="Last Studied Date">
-                        <i class="fa-solid fa-clock-rotate-left text-slate-400 text-[11px]"></i>
-                        <span class="text-[10px] uppercase font-bold text-slate-400 hidden sm:inline">Studied:</span>
+                    <!-- Last Studied Calendar (Always Green) -->
+                    <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-emerald-400 dark:border-emerald-600 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 text-xs shadow-xs" title="Last Studied Date">
+                        <i class="fa-solid fa-clock-rotate-left text-emerald-600 dark:text-emerald-400 text-[11px]"></i>
+                        <span class="text-[10px] uppercase font-bold text-emerald-700 dark:text-emerald-300">Last Studied:</span>
                         <input type="date" value="${topic.lastStudied || ''}" 
                             onchange="updateTopicDate('${subjectId}', '${topic.id}', 'lastStudied', this.value)"
-                            class="bg-transparent text-slate-700 dark:text-slate-200 text-xs font-semibold focus:outline-none cursor-pointer">
+                            class="bg-transparent text-emerald-800 dark:text-emerald-200 text-xs font-semibold focus:outline-none cursor-pointer">
                     </div>
 
-                    <!-- Next Revision Calendar -->
-                    <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg border ${revisionHighlight} text-xs shadow-xs" title="Next Revision Due Date">
-                        <i class="fa-solid fa-calendar-day text-[11px]"></i>
-                        <span class="text-[10px] uppercase font-bold hidden sm:inline">Revision:</span>
+                    <!-- Next Revision Calendar (Always Red) -->
+                    <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-rose-400 dark:border-rose-600 bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 text-xs shadow-xs" title="Next Revision Date">
+                        <i class="fa-solid fa-calendar-day text-rose-600 dark:text-rose-400 text-[11px]"></i>
+                        <span class="text-[10px] uppercase font-bold text-rose-700 dark:text-rose-300">Next Revision:</span>
                         <input type="date" value="${topic.nextRevision || ''}" 
                             onchange="updateTopicDate('${subjectId}', '${topic.id}', 'nextRevision', this.value)"
-                            class="bg-transparent text-xs font-semibold focus:outline-none cursor-pointer">
+                            class="bg-transparent text-rose-800 dark:text-rose-200 text-xs font-semibold focus:outline-none cursor-pointer">
                     </div>
 
                     <!-- Priority Badge -->
