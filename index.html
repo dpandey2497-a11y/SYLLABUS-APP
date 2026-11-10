@@ -44,6 +44,13 @@
             background: rgba(100,116,139,0.3);
             border-radius: 4px;
         }
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            cursor: pointer;
+            filter: invert(0.5);
+        }
+        .dark input[type="date"]::-webkit-calendar-picker-indicator {
+            filter: invert(0.8);
+        }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 dark:bg-darkbg dark:text-slate-100 min-h-screen transition-colors duration-200 antialiased font-sans">
@@ -208,7 +215,7 @@
                 </select>
 
                 <span class="text-xs text-slate-400 dark:text-slate-500 hidden xl:inline">
-                    <i class="fa-solid fa-circle-info mr-1"></i>Tap topic to cycle: Pending ➔ Progress ➔ Done
+                    <i class="fa-solid fa-circle-info mr-1"></i>Tap check to cycle status | Select calendar to schedule revision
                 </span>
             </div>
 
@@ -289,8 +296,19 @@
                 <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">
                     Topics (One per line or comma-separated)
                 </label>
-                <textarea id="modalTopicInput" rows="4" placeholder="e.g. Fundamental Rights, DPSP, Preamble"
+                <textarea id="modalTopicInput" rows="3" placeholder="e.g. Fundamental Rights, DPSP, Preamble"
                     class="w-full text-xs p-3 rounded-lg border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-teal-500"></textarea>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Last Studied</label>
+                    <input type="date" id="modalLastStudied" class="w-full text-xs p-2 rounded-lg border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Next Revision</label>
+                    <input type="date" id="modalNextRevision" class="w-full text-xs p-2 rounded-lg border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 focus:outline-none">
+                </div>
             </div>
 
             <div>
@@ -359,7 +377,7 @@
 
     <!-- Application Script -->
     <script>
-        const STORAGE_KEY = 'syllabus_tracker_v3_data';
+        const STORAGE_KEY = 'syllabus_tracker_v4_data';
         const THEME_KEY = 'syllabus_tracker_theme';
 
         const defaultData = {
@@ -376,11 +394,11 @@
                         name: "Indian Polity & Governance",
                         color: "teal",
                         topics: [
-                            { id: "t1", text: "Preamble & Salient Features of Constitution", status: "completed", priority: "high" },
-                            { id: "t2", text: "Fundamental Rights, DPSP & Fundamental Duties", status: "in-progress", priority: "high" },
-                            { id: "t3", text: "Union Executive: President, PM & Cabinet", status: "pending", priority: "medium" },
-                            { id: "t4", text: "Judiciary: Supreme Court & High Courts", status: "pending", priority: "high" },
-                            { id: "t5", text: "Panchayati Raj & 73rd/74th Amendments", status: "pending", priority: "medium" }
+                            { id: "t1", text: "Preamble & Salient Features of Constitution", status: "completed", priority: "high", lastStudied: "", nextRevision: "" },
+                            { id: "t2", text: "Fundamental Rights, DPSP & Fundamental Duties", status: "in-progress", priority: "high", lastStudied: "", nextRevision: "" },
+                            { id: "t3", text: "Union Executive: President, PM & Cabinet", status: "pending", priority: "medium", lastStudied: "", nextRevision: "" },
+                            { id: "t4", text: "Judiciary: Supreme Court & High Courts", status: "pending", priority: "high", lastStudied: "", nextRevision: "" },
+                            { id: "t5", text: "Panchayati Raj & 73rd/74th Amendments", status: "pending", priority: "medium", lastStudied: "", nextRevision: "" }
                         ]
                     },
                     {
@@ -388,9 +406,9 @@
                         name: "Modern Indian History",
                         color: "amber",
                         topics: [
-                            { id: "t6", text: "Revolt of 1857 & Early Resistance", status: "completed", priority: "medium" },
-                            { id: "t7", text: "Socio-Religious Reform Movements", status: "in-progress", priority: "high" },
-                            { id: "t8", text: "Gandhian Era & Mass Movements (1915–1947)", status: "pending", priority: "high" }
+                            { id: "t6", text: "Revolt of 1857 & Early Resistance", status: "completed", priority: "medium", lastStudied: "", nextRevision: "" },
+                            { id: "t7", text: "Socio-Religious Reform Movements", status: "in-progress", priority: "high", lastStudied: "", nextRevision: "" },
+                            { id: "t8", text: "Gandhian Era & Mass Movements (1915–1947)", status: "pending", priority: "high", lastStudied: "", nextRevision: "" }
                         ]
                     },
                     {
@@ -398,8 +416,8 @@
                         name: "Indian & World Geography",
                         color: "sky",
                         topics: [
-                            { id: "t9", text: "Geomorphology & Plate Tectonics", status: "pending", priority: "medium" },
-                            { id: "t10", text: "Indian Monsoon & Drainage Systems", status: "pending", priority: "high" }
+                            { id: "t9", text: "Geomorphology & Plate Tectonics", status: "pending", priority: "medium", lastStudied: "", nextRevision: "" },
+                            { id: "t10", text: "Indian Monsoon & Drainage Systems", status: "pending", priority: "high", lastStudied: "", nextRevision: "" }
                         ]
                     }
                 ],
@@ -409,8 +427,8 @@
                         name: "GS Paper II: Governance, Constitution & Polity",
                         color: "teal",
                         topics: [
-                            { id: "tm1", text: "Comparison of Indian Constitutional Scheme with World", status: "pending", priority: "high" },
-                            { id: "tm2", text: "Structure, Organisation and Functioning of Ministries", status: "pending", priority: "medium" }
+                            { id: "tm1", text: "Comparison of Indian Constitutional Scheme with World", status: "pending", priority: "high", lastStudied: "", nextRevision: "" },
+                            { id: "tm2", text: "Structure, Organisation and Functioning of Ministries", status: "pending", priority: "medium", lastStudied: "", nextRevision: "" }
                         ]
                     },
                     {
@@ -418,8 +436,8 @@
                         name: "GS Paper IV: Ethics, Integrity & Aptitude",
                         color: "violet",
                         topics: [
-                            { id: "tm3", text: "Ethics and Human Interface; Moral Philosophers", status: "pending", priority: "high" },
-                            { id: "tm4", text: "Case Studies on Ethical Dilemmas in Administration", status: "pending", priority: "high" }
+                            { id: "tm3", text: "Ethics and Human Interface; Moral Philosophers", status: "pending", priority: "high", lastStudied: "", nextRevision: "" },
+                            { id: "tm4", text: "Case Studies on Ethical Dilemmas in Administration", status: "pending", priority: "high", lastStudied: "", nextRevision: "" }
                         ]
                     }
                 ]
@@ -437,9 +455,9 @@
                         name: "Bihar Special & General Knowledge",
                         color: "amber",
                         topics: [
-                            { id: "bt1", text: "History of Bihar & 1857 in Bihar (Kunwar Singh)", status: "pending", priority: "high" },
-                            { id: "bt2", text: "Geography of Bihar: Rivers, Soil & Agro-climatic Zones", status: "pending", priority: "high" },
-                            { id: "bt3", text: "Bihar Economic Survey & State Budget Highlights", status: "pending", priority: "high" }
+                            { id: "bt1", text: "History of Bihar & 1857 in Bihar (Kunwar Singh)", status: "pending", priority: "high", lastStudied: "", nextRevision: "" },
+                            { id: "bt2", text: "Geography of Bihar: Rivers, Soil & Agro-climatic Zones", status: "pending", priority: "high", lastStudied: "", nextRevision: "" },
+                            { id: "bt3", text: "Bihar Economic Survey & State Budget Highlights", status: "pending", priority: "high", lastStudied: "", nextRevision: "" }
                         ]
                     },
                     {
@@ -447,8 +465,8 @@
                         name: "General Science & Mental Ability",
                         color: "emerald",
                         topics: [
-                            { id: "bt4", text: "Everyday Physics & Optics", status: "pending", priority: "medium" },
-                            { id: "bt5", text: "Biology: Human Physiology & Diseases", status: "pending", priority: "high" }
+                            { id: "bt4", text: "Everyday Physics & Optics", status: "pending", priority: "medium", lastStudied: "", nextRevision: "" },
+                            { id: "bt5", text: "Biology: Human Physiology & Diseases", status: "pending", priority: "high", lastStudied: "", nextRevision: "" }
                         ]
                     }
                 ],
@@ -458,8 +476,8 @@
                         name: "GS Paper I: Modern History & Statistical Analysis",
                         color: "amber",
                         topics: [
-                            { id: "bmt1", text: "Santhal Uprising & Birsa Munda Movement", status: "pending", priority: "high" },
-                            { id: "bmt2", text: "Statistical Graphs, Diagrams & Data Analysis", status: "pending", priority: "high" }
+                            { id: "bmt1", text: "Santhal Uprising & Birsa Munda Movement", status: "pending", priority: "high", lastStudied: "", nextRevision: "" },
+                            { id: "bmt2", text: "Statistical Graphs, Diagrams & Data Analysis", status: "pending", priority: "high", lastStudied: "", nextRevision: "" }
                         ]
                     }
                 ]
@@ -477,12 +495,12 @@
                         name: "Section A: Political Theory & Thinkers",
                         color: "indigo",
                         topics: [
-                            { id: "pt1", text: "Plato: Justice, Philosopher King, Ideal State", status: "completed", priority: "high" },
-                            { id: "pt2", text: "Aristotle: Theory of State, Slavery & Revolution", status: "in-progress", priority: "high" },
-                            { id: "pt3", text: "Machiavelli, Hobbes, Locke & Rousseau", status: "pending", priority: "high" },
-                            { id: "pt4", text: "Karl Marx: Historical Materialism & Alienation", status: "pending", priority: "high" },
-                            { id: "pt5", text: "Gramsci: Hegemony & Civil Society", status: "pending", priority: "medium" },
-                            { id: "pt6", text: "B.R. Ambedkar: Social Justice & Annihilation of Caste", status: "pending", priority: "high" }
+                            { id: "pt1", text: "Plato: Justice, Philosopher King, Ideal State", status: "completed", priority: "high", lastStudied: "", nextRevision: "" },
+                            { id: "pt2", text: "Aristotle: Theory of State, Slavery & Revolution", status: "in-progress", priority: "high", lastStudied: "", nextRevision: "" },
+                            { id: "pt3", text: "Machiavelli, Hobbes, Locke & Rousseau", status: "pending", priority: "high", lastStudied: "", nextRevision: "" },
+                            { id: "pt4", text: "Karl Marx: Historical Materialism & Alienation", status: "pending", priority: "high", lastStudied: "", nextRevision: "" },
+                            { id: "pt5", text: "Gramsci: Hegemony & Civil Society", status: "pending", priority: "medium", lastStudied: "", nextRevision: "" },
+                            { id: "pt6", text: "B.R. Ambedkar: Social Justice & Annihilation of Caste", status: "pending", priority: "high", lastStudied: "", nextRevision: "" }
                         ]
                     },
                     {
@@ -490,8 +508,8 @@
                         name: "Section B: Indian Government and Politics (IGP)",
                         color: "blue",
                         topics: [
-                            { id: "pt7", text: "Making of the Constitution & Ideological Bases", status: "pending", priority: "high" },
-                            { id: "pt8", text: "Caste, Religion & Ethnicity in Indian Politics", status: "pending", priority: "high" }
+                            { id: "pt7", text: "Making of the Constitution & Ideological Bases", status: "pending", priority: "high", lastStudied: "", nextRevision: "" },
+                            { id: "pt8", text: "Caste, Religion & Ethnicity in Indian Politics", status: "pending", priority: "high", lastStudied: "", nextRevision: "" }
                         ]
                     }
                 ],
@@ -501,8 +519,8 @@
                         name: "Comparative Politics & International Politics",
                         color: "slate",
                         topics: [
-                            { id: "pt9", text: "Realist, Liberal and Marxist Theories of IR", status: "pending", priority: "high" },
-                            { id: "pt10", text: "Nuclear Arms Race, NPT, CTBT & Disarmament", status: "pending", priority: "medium" }
+                            { id: "pt9", text: "Realist, Liberal and Marxist Theories of IR", status: "pending", priority: "high", lastStudied: "", nextRevision: "" },
+                            { id: "pt10", text: "Nuclear Arms Race, NPT, CTBT & Disarmament", status: "pending", priority: "medium", lastStudied: "", nextRevision: "" }
                         ]
                     },
                     {
@@ -510,8 +528,8 @@
                         name: "India and the World",
                         color: "indigo",
                         topics: [
-                            { id: "pt11", text: "India's Foreign Policy Determinants & Non-Alignment", status: "pending", priority: "high" },
-                            { id: "pt12", text: "India-US and India-China Strategic Dynamics", status: "pending", priority: "high" }
+                            { id: "pt11", text: "India's Foreign Policy Determinants & Non-Alignment", status: "pending", priority: "high", lastStudied: "", nextRevision: "" },
+                            { id: "pt12", text: "India-US and India-China Strategic Dynamics", status: "pending", priority: "high", lastStudied: "", nextRevision: "" }
                         ]
                     }
                 ]
@@ -529,10 +547,10 @@
                         name: "Paper 1: Teaching & Research Aptitude",
                         color: "purple",
                         topics: [
-                            { id: "ut1", text: "Teaching Concepts, Levels of Teaching & Methods", status: "pending", priority: "high" },
-                            { id: "ut2", text: "Research Aptitude: Steps, Ethics & Thesis Writing", status: "pending", priority: "high" },
-                            { id: "ut3", text: "Communication: Interpersonal & Classroom Barrier Analysis", status: "pending", priority: "medium" },
-                            { id: "ut4", text: "Higher Education System: Governance & Administration", status: "pending", priority: "medium" }
+                            { id: "ut1", text: "Teaching Concepts, Levels of Teaching & Methods", status: "pending", priority: "high", lastStudied: "", nextRevision: "" },
+                            { id: "ut2", text: "Research Aptitude: Steps, Ethics & Thesis Writing", status: "pending", priority: "high", lastStudied: "", nextRevision: "" },
+                            { id: "ut3", text: "Communication: Interpersonal & Classroom Barrier Analysis", status: "pending", priority: "medium", lastStudied: "", nextRevision: "" },
+                            { id: "ut4", text: "Higher Education System: Governance & Administration", status: "pending", priority: "medium", lastStudied: "", nextRevision: "" }
                         ]
                     }
                 ],
@@ -542,9 +560,9 @@
                         name: "Paper 2: Political Science Core",
                         color: "indigo",
                         topics: [
-                            { id: "ut5", text: "Unit 1: Political Theory: Concepts of Liberty, Equality, Justice", status: "pending", priority: "high" },
-                            { id: "ut6", text: "Unit 2: Political Thought: Western & Indian Thinkers", status: "pending", priority: "high" },
-                            { id: "ut7", text: "Unit 3: Public Administration: Theories & Principles", status: "pending", priority: "high" }
+                            { id: "ut5", text: "Unit 1: Political Theory: Concepts of Liberty, Equality, Justice", status: "pending", priority: "high", lastStudied: "", nextRevision: "" },
+                            { id: "ut6", text: "Unit 2: Political Thought: Western & Indian Thinkers", status: "pending", priority: "high", lastStudied: "", nextRevision: "" },
+                            { id: "ut7", text: "Unit 3: Public Administration: Theories & Principles", status: "pending", priority: "high", lastStudied: "", nextRevision: "" }
                         ]
                     }
                 ]
@@ -561,10 +579,10 @@
                         name: "Monthly Current Affairs Modules",
                         color: "rose",
                         topics: [
-                            { id: "cat1", text: "National Schemes & Government Initiatives", status: "pending", priority: "high" },
-                            { id: "cat2", text: "International Summits (G20, BRICS, SCO)", status: "pending", priority: "high" },
-                            { id: "cat3", text: "Science & Tech: Space Missions & AI Guidelines", status: "pending", priority: "medium" },
-                            { id: "cat4", text: "Environment: COP Declarations & Biodiversity Protocols", status: "pending", priority: "high" }
+                            { id: "cat1", text: "National Schemes & Government Initiatives", status: "pending", priority: "high", lastStudied: "", nextRevision: "" },
+                            { id: "cat2", text: "International Summits (G20, BRICS, SCO)", status: "pending", priority: "high", lastStudied: "", nextRevision: "" },
+                            { id: "cat3", text: "Science & Tech: Space Missions & AI Guidelines", status: "pending", priority: "medium", lastStudied: "", nextRevision: "" },
+                            { id: "cat4", text: "Environment: COP Declarations & Biodiversity Protocols", status: "pending", priority: "high", lastStudied: "", nextRevision: "" }
                         ]
                     },
                     {
@@ -572,8 +590,8 @@
                         name: "Surveys, Indices & Reports",
                         color: "pink",
                         topics: [
-                            { id: "cat5", text: "Union Budget & Economic Survey Trends", status: "pending", priority: "high" },
-                            { id: "cat6", text: "NITI Aayog SDG Index & State Indices", status: "pending", priority: "medium" }
+                            { id: "cat5", text: "Union Budget & Economic Survey Trends", status: "pending", priority: "high", lastStudied: "", nextRevision: "" },
+                            { id: "cat6", text: "NITI Aayog SDG Index & State Indices", status: "pending", priority: "medium", lastStudied: "", nextRevision: "" }
                         ]
                     }
                 ]
@@ -590,12 +608,12 @@
                         name: "Quantitative Aptitude (Maths)",
                         color: "sky",
                         topics: [
-                            { id: "cst1", text: "Number System, Divisibility & Remainders", status: "pending", priority: "high" },
-                            { id: "cst2", text: "Percentages, Profit & Loss", status: "pending", priority: "high" },
-                            { id: "cst3", text: "Ratio, Proportion & Mixtures", status: "pending", priority: "medium" },
-                            { id: "cst4", text: "Time, Speed & Distance (Trains, Boats)", status: "pending", priority: "high" },
-                            { id: "cst5", text: "Time & Work, Pipes & Cisterns", status: "pending", priority: "medium" },
-                            { id: "cst6", text: "Permutation, Combination & Basic Probability", status: "pending", priority: "high" }
+                            { id: "cst1", text: "Number System, Divisibility & Remainders", status: "pending", priority: "high", lastStudied: "", nextRevision: "" },
+                            { id: "cst2", text: "Percentages, Profit & Loss", status: "pending", priority: "high", lastStudied: "", nextRevision: "" },
+                            { id: "cst3", text: "Ratio, Proportion & Mixtures", status: "pending", priority: "medium", lastStudied: "", nextRevision: "" },
+                            { id: "cst4", text: "Time, Speed & Distance (Trains, Boats)", status: "pending", priority: "high", lastStudied: "", nextRevision: "" },
+                            { id: "cst5", text: "Time & Work, Pipes & Cisterns", status: "pending", priority: "medium", lastStudied: "", nextRevision: "" },
+                            { id: "cst6", text: "Permutation, Combination & Basic Probability", status: "pending", priority: "high", lastStudied: "", nextRevision: "" }
                         ]
                     },
                     {
@@ -603,11 +621,11 @@
                         name: "Logical & Analytical Reasoning",
                         color: "blue",
                         topics: [
-                            { id: "cst7", text: "Syllogisms & Deductive Logic", status: "pending", priority: "high" },
-                            { id: "cst8", text: "Blood Relations & Family Trees", status: "pending", priority: "medium" },
-                            { id: "cst9", text: "Direction Sense & Positional Mapping", status: "pending", priority: "low" },
-                            { id: "cst10", text: "Seating Arrangement & Linear Puzzles", status: "pending", priority: "high" },
-                            { id: "cst11", text: "Coding-Decoding & Series Completion", status: "pending", priority: "medium" }
+                            { id: "cst7", text: "Syllogisms & Deductive Logic", status: "pending", priority: "high", lastStudied: "", nextRevision: "" },
+                            { id: "cst8", text: "Blood Relations & Family Trees", status: "pending", priority: "medium", lastStudied: "", nextRevision: "" },
+                            { id: "cst9", text: "Direction Sense & Positional Mapping", status: "pending", priority: "low", lastStudied: "", nextRevision: "" },
+                            { id: "cst10", text: "Seating Arrangement & Linear Puzzles", status: "pending", priority: "high", lastStudied: "", nextRevision: "" },
+                            { id: "cst11", text: "Coding-Decoding & Series Completion", status: "pending", priority: "medium", lastStudied: "", nextRevision: "" }
                         ]
                     },
                     {
@@ -615,9 +633,9 @@
                         name: "Reading Comprehension",
                         color: "indigo",
                         topics: [
-                            { id: "cst12", text: "Crux, Central Theme & Main Idea Identification", status: "pending", priority: "high" },
-                            { id: "cst13", text: "Logical Corollaries & Assumptions Extraction", status: "pending", priority: "high" },
-                            { id: "cst14", text: "Inference & Implicit Conclusion Questions", status: "pending", priority: "high" }
+                            { id: "cst12", text: "Crux, Central Theme & Main Idea Identification", status: "pending", priority: "high", lastStudied: "", nextRevision: "" },
+                            { id: "cst13", text: "Logical Corollaries & Assumptions Extraction", status: "pending", priority: "high", lastStudied: "", nextRevision: "" },
+                            { id: "cst14", text: "Inference & Implicit Conclusion Questions", status: "pending", priority: "high", lastStudied: "", nextRevision: "" }
                         ]
                     },
                     {
@@ -625,9 +643,9 @@
                         name: "Data Interpretation & Sufficiency",
                         color: "teal",
                         topics: [
-                            { id: "cst15", text: "Bar Graphs, Histograms & Pie Charts", status: "pending", priority: "medium" },
-                            { id: "cst16", text: "Data Tables & Numerical Comparison Statements", status: "pending", priority: "medium" },
-                            { id: "cst17", text: "Statement Data Sufficiency Problems", status: "pending", priority: "high" }
+                            { id: "cst15", text: "Bar Graphs, Histograms & Pie Charts", status: "pending", priority: "medium", lastStudied: "", nextRevision: "" },
+                            { id: "cst16", text: "Data Tables & Numerical Comparison Statements", status: "pending", priority: "medium", lastStudied: "", nextRevision: "" },
+                            { id: "cst17", text: "Statement Data Sufficiency Problems", status: "pending", priority: "high", lastStudied: "", nextRevision: "" }
                         ]
                     }
                 ]
@@ -645,7 +663,6 @@
             loadAppData();
             renderCurrentView();
 
-            // Register Service Worker
             if ('serviceWorker' in navigator) {
                 navigator.serviceWorker.register('./sw.js')
                     .then((reg) => console.log('SW Registered', reg))
@@ -692,7 +709,17 @@
                     appData = JSON.parse(JSON.stringify(defaultData));
                 }
             } else {
-                appData = JSON.parse(JSON.stringify(defaultData));
+                const oldData = localStorage.getItem('syllabus_tracker_v3_data');
+                if (oldData) {
+                    try {
+                        appData = JSON.parse(oldData);
+                        ensureSchemaIntegrity();
+                    } catch(e) {
+                        appData = JSON.parse(JSON.stringify(defaultData));
+                    }
+                } else {
+                    appData = JSON.parse(JSON.stringify(defaultData));
+                }
             }
         }
 
@@ -701,9 +728,6 @@
         }
 
         function ensureSchemaIntegrity() {
-            if (appData.upsc) appData.upsc.theme = "from-cyan-700 via-teal-700 to-emerald-800";
-            if (appData.ugc) appData.ugc.theme = "from-violet-800 via-purple-700 to-indigo-900";
-
             for (let secKey in appData) {
                 const sec = appData[secKey];
                 const listArrays = sec.hasSubTiers ? [sec.tier1 || [], sec.tier2 || []] : [sec.topicsList || []];
@@ -711,9 +735,10 @@
                     arr.forEach(sub => {
                         if (Array.isArray(sub.topics)) {
                             sub.topics.forEach(t => {
-                                if (t.completed === true && !t.status) t.status = "completed";
                                 if (!t.status) t.status = "pending";
                                 if (!t.priority) t.priority = "medium";
+                                if (t.lastStudied === undefined) t.lastStudied = "";
+                                if (t.nextRevision === undefined) t.nextRevision = "";
                             });
                         }
                     });
@@ -926,7 +951,7 @@
                         <i class="fa-solid fa-check text-xs"></i> Done
                     </span>`;
                 checkIcon = `
-                    <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-gradient-to-tr from-emerald-600 to-green-500 text-white flex items-center justify-center text-sm sm:text-base shadow-md shadow-emerald-500/30 ring-2 ring-emerald-400/30 flex-shrink-0">
+                    <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-gradient-to-tr from-emerald-600 to-green-500 text-white flex items-center justify-center text-sm sm:text-base shadow-md shadow-emerald-500/30 ring-2 ring-emerald-400/30 flex-shrink-0 cursor-pointer">
                         <i class="fa-solid fa-check"></i>
                     </div>`;
                 textClass = 'line-through text-slate-400 dark:text-slate-500 font-semibold text-sm sm:text-base md:text-lg';
@@ -937,7 +962,7 @@
                         <i class="fa-solid fa-hourglass-half text-xs"></i> Progress
                     </span>`;
                 checkIcon = `
-                    <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-gradient-to-tr from-amber-500 to-yellow-400 text-white flex items-center justify-center text-xs sm:text-sm shadow-md shadow-amber-500/40 ring-2 ring-amber-400/40 flex-shrink-0">
+                    <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-gradient-to-tr from-amber-500 to-yellow-400 text-white flex items-center justify-center text-xs sm:text-sm shadow-md shadow-amber-500/40 ring-2 ring-amber-400/40 flex-shrink-0 cursor-pointer">
                         <i class="fa-solid fa-hourglass-half"></i>
                     </div>`;
                 cardClass = 'bg-amber-50/70 dark:bg-amber-950/30 border-amber-300 dark:border-amber-700/60 shadow-sm';
@@ -947,29 +972,86 @@
                         Pending
                     </span>`;
                 checkIcon = `
-                    <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl border-2 border-dashed border-slate-300 dark:border-slate-600 hover:border-slate-400 flex items-center justify-center flex-shrink-0 bg-white/50 dark:bg-slate-800/50">
+                    <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl border-2 border-dashed border-slate-300 dark:border-slate-600 hover:border-slate-400 flex items-center justify-center flex-shrink-0 bg-white/50 dark:bg-slate-800/50 cursor-pointer">
                         <span class="w-2 h-2 rounded-full bg-slate-300 dark:bg-slate-600"></span>
                     </div>`;
             }
 
-            div.className = `flex items-center justify-between p-3.5 sm:p-4 rounded-xl border ${cardClass} cursor-pointer transition-all gap-3 select-none hover:shadow-sm`;
+            // Check if Next Revision is Due or Overdue
+            const todayStr = new Date().toISOString().split('T')[0];
+            let revisionHighlight = 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300';
+            if (topic.nextRevision) {
+                if (topic.nextRevision <= todayStr) {
+                    revisionHighlight = 'border-rose-400 dark:border-rose-600 bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-300 font-bold ring-1 ring-rose-400/40';
+                } else {
+                    revisionHighlight = 'border-teal-300 dark:border-teal-700 bg-teal-50/40 dark:bg-teal-950/30 text-teal-700 dark:text-teal-300';
+                }
+            }
+
+            div.className = `flex flex-col lg:flex-row lg:items-center justify-between p-3.5 sm:p-4 rounded-xl border ${cardClass} transition-all gap-3 select-none hover:shadow-sm`;
             
             div.innerHTML = `
-                <div class="flex items-center gap-3.5 flex-1 min-w-0" onclick="cycleTopicStatus('${subjectId}', '${topic.id}')">
-                    ${checkIcon}
-                    <span class="${textClass} break-words leading-relaxed">${topic.text}</span>
+                <!-- Left: Status Check & Topic Title -->
+                <div class="flex items-center gap-3.5 flex-1 min-w-0">
+                    <div onclick="cycleTopicStatus('${subjectId}', '${topic.id}')">${checkIcon}</div>
+                    <span onclick="cycleTopicStatus('${subjectId}', '${topic.id}')" class="${textClass} cursor-pointer break-words leading-relaxed">${topic.text}</span>
                 </div>
-                <div class="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+
+                <!-- Right: Date Pickers, Priority & Status -->
+                <div class="flex flex-wrap items-center gap-2 sm:gap-3 flex-shrink-0 self-end lg:self-center">
+                    
+                    <!-- Last Studied Calendar -->
+                    <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/80 text-xs shadow-xs" title="Last Studied Date">
+                        <i class="fa-solid fa-clock-rotate-left text-slate-400 text-[11px]"></i>
+                        <span class="text-[10px] uppercase font-bold text-slate-400 hidden sm:inline">Studied:</span>
+                        <input type="date" value="${topic.lastStudied || ''}" 
+                            onchange="updateTopicDate('${subjectId}', '${topic.id}', 'lastStudied', this.value)"
+                            class="bg-transparent text-slate-700 dark:text-slate-200 text-xs font-semibold focus:outline-none cursor-pointer">
+                    </div>
+
+                    <!-- Next Revision Calendar -->
+                    <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg border ${revisionHighlight} text-xs shadow-xs" title="Next Revision Due Date">
+                        <i class="fa-solid fa-calendar-day text-[11px]"></i>
+                        <span class="text-[10px] uppercase font-bold hidden sm:inline">Revision:</span>
+                        <input type="date" value="${topic.nextRevision || ''}" 
+                            onchange="updateTopicDate('${subjectId}', '${topic.id}', 'nextRevision', this.value)"
+                            class="bg-transparent text-xs font-semibold focus:outline-none cursor-pointer">
+                    </div>
+
+                    <!-- Priority Badge -->
                     <span class="text-[11px] sm:text-xs font-black px-2.5 py-1 rounded-lg border ${priConfig.bg}">${priConfig.label}</span>
-                    <div onclick="cycleTopicStatus('${subjectId}', '${topic.id}')">${statusBadge}</div>
+                    
+                    <!-- Status Button -->
+                    <div class="cursor-pointer" onclick="cycleTopicStatus('${subjectId}', '${topic.id}')">${statusBadge}</div>
+                    
+                    <!-- Delete Button -->
                     <button onclick="deleteTopic('${subjectId}', '${topic.id}')" title="Delete Topic"
-                        class="text-slate-300 hover:text-rose-500 dark:hover:text-rose-400 p-1.5 ml-1 text-sm sm:text-base transition-colors">
+                        class="text-slate-300 hover:text-rose-500 dark:hover:text-rose-400 p-1.5 ml-0.5 text-sm sm:text-base transition-colors">
                         <i class="fa-solid fa-trash-can"></i>
                     </button>
                 </div>
             `;
 
             return div;
+        }
+
+        function updateTopicDate(subjectId, topicId, field, dateValue) {
+            const subjects = getActiveSubjectsList();
+            const subject = subjects.find(s => s.id === subjectId);
+            if (!subject) return;
+
+            const topic = subject.topics.find(t => t.id === topicId);
+            if (!topic) return;
+
+            topic[field] = dateValue;
+
+            // Agar last studied set kiya aur topic pending tha, toh auto progress mark kar sakte hain
+            if (field === 'lastStudied' && dateValue && topic.status === 'pending') {
+                topic.status = 'in-progress';
+            }
+
+            saveAppData();
+            renderCurrentView();
         }
 
         function cycleTopicStatus(subjectId, topicId) {
@@ -980,10 +1062,20 @@
             const topic = subject.topics.find(t => t.id === topicId);
             if (!topic) return;
 
+            const todayStr = new Date().toISOString().split('T')[0];
+
             if (topic.status === 'pending') {
                 topic.status = 'in-progress';
+                if (!topic.lastStudied) topic.lastStudied = todayStr;
             } else if (topic.status === 'in-progress') {
                 topic.status = 'completed';
+                topic.lastStudied = todayStr;
+                // Auto schedule next revision 7 days later if not already set
+                if (!topic.nextRevision) {
+                    const nextDate = new Date();
+                    nextDate.setDate(nextDate.getDate() + 7);
+                    topic.nextRevision = nextDate.toISOString().split('T')[0];
+                }
             } else {
                 topic.status = 'pending';
             }
@@ -1173,6 +1265,8 @@
 
             selectPriority('high');
             document.getElementById('modalTopicInput').value = '';
+            document.getElementById('modalLastStudied').value = '';
+            document.getElementById('modalNextRevision').value = '';
             document.getElementById('addTopicModal').classList.remove('hidden');
         }
 
@@ -1204,6 +1298,8 @@
         function submitNewTopics() {
             const subjectId = document.getElementById('modalSubjectSelect').value;
             const rawText = document.getElementById('modalTopicInput').value.trim();
+            const lastStudiedVal = document.getElementById('modalLastStudied').value;
+            const nextRevisionVal = document.getElementById('modalNextRevision').value;
 
             if (!rawText) {
                 alert("Please write at least one topic.");
@@ -1220,8 +1316,10 @@
                 subject.topics.push({
                     id: 't_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
                     text: text,
-                    status: 'pending',
-                    priority: activePrioritySelect
+                    status: lastStudiedVal ? 'in-progress' : 'pending',
+                    priority: activePrioritySelect,
+                    lastStudied: lastStudiedVal,
+                    nextRevision: nextRevisionVal
                 });
             });
 
