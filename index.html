@@ -1,0 +1,1265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Syllabus Tracker</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        darkbg: '#0f172a',
+                        darkcard: '#1e293b',
+                        darkborder: '#334155'
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        .custom-scroll::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scroll::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.05);
+        }
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: rgba(100,116,139,0.3);
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 dark:bg-darkbg dark:text-slate-100 min-h-screen transition-colors duration-200 antialiased font-sans">
+
+    <!-- Top Header -->
+    <header class="sticky top-0 z-40 bg-white/90 dark:bg-darkcard/90 backdrop-blur-md border-b border-slate-200 dark:border-darkborder shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-600 to-teal-700 flex items-center justify-center text-white shadow-md shadow-teal-500/20">
+                    <i class="fa-solid fa-graduation-cap text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg sm:text-xl font-extrabold tracking-tight bg-gradient-to-r from-slate-900 via-teal-800 to-cyan-700 dark:from-white dark:via-teal-200 dark:to-cyan-400 bg-clip-text text-transparent">
+                        Syllabus Tracker
+                    </h1>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">Target Preparation & Revision Dashboard</p>
+                </div>
+            </div>
+
+            <!-- Header Controls -->
+            <div class="flex items-center gap-2">
+                <!-- Live Search -->
+                <div class="relative hidden sm:block w-48 md:w-64">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-xs text-slate-400"></i>
+                    <input type="text" id="searchInput" placeholder="Search topic..." oninput="handleSearch(this.value)"
+                        class="w-full pl-8 pr-3 py-1.5 text-xs rounded-lg border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800/80 focus:outline-none focus:ring-2 focus:ring-teal-500/50">
+                </div>
+
+                <!-- Backup Menu Button -->
+                <button onclick="toggleBackupModal()" title="Backup & Restore Data"
+                    class="p-2 sm:px-3 sm:py-1.5 text-xs font-semibold rounded-lg border border-slate-200 dark:border-darkborder hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 flex items-center gap-1.5">
+                    <i class="fa-solid fa-database"></i>
+                    <span class="hidden md:inline">Backup</span>
+                </button>
+
+                <!-- Fullscreen Toggle -->
+                <button onclick="toggleFullScreen()" title="Full Screen"
+                    class="p-2 rounded-lg border border-slate-200 dark:border-darkborder hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300">
+                    <i class="fa-solid fa-expand" id="fsIcon"></i>
+                </button>
+
+                <!-- Day/Night Toggle -->
+                <button onclick="toggleTheme()" title="Toggle Theme"
+                    class="p-2 rounded-lg border border-slate-200 dark:border-darkborder hover:bg-slate-100 dark:hover:bg-slate-800 text-amber-500 dark:text-yellow-400">
+                    <i class="fa-solid fa-sun hidden dark:inline text-base"></i>
+                    <i class="fa-solid fa-moon inline dark:hidden text-base text-slate-600"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6">
+
+        <!-- 6 Main Sections Tab Bar -->
+        <nav class="flex items-center gap-2 overflow-x-auto pb-2 custom-scroll border-b border-slate-200 dark:border-darkborder">
+            <button onclick="switchSection('upsc')" id="tab-upsc" class="tab-btn px-4 py-2 text-sm font-bold rounded-lg transition-all flex items-center gap-2 whitespace-nowrap bg-teal-600 text-white shadow-md shadow-teal-500/20">
+                <i class="fa-solid fa-landmark"></i> UPSC CSE
+            </button>
+            <button onclick="switchSection('bpsc')" id="tab-bpsc" class="tab-btn px-4 py-2 text-sm font-bold rounded-lg transition-all flex items-center gap-2 whitespace-nowrap text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800">
+                <i class="fa-solid fa-scale-balanced"></i> BPSC
+            </button>
+            <button onclick="switchSection('psir')" id="tab-psir" class="tab-btn px-4 py-2 text-sm font-bold rounded-lg transition-all flex items-center gap-2 whitespace-nowrap text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800">
+                <i class="fa-solid fa-book-journal-whills"></i> PSIR Optional
+            </button>
+            <button onclick="switchSection('ugc')" id="tab-ugc" class="tab-btn px-4 py-2 text-sm font-bold rounded-lg transition-all flex items-center gap-2 whitespace-nowrap text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800">
+                <i class="fa-solid fa-award"></i> UGC NET
+            </button>
+            <button onclick="switchSection('ca')" id="tab-ca" class="tab-btn px-4 py-2 text-sm font-bold rounded-lg transition-all flex items-center gap-2 whitespace-nowrap text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800">
+                <i class="fa-solid fa-newspaper"></i> Current Affairs
+            </button>
+            <button onclick="switchSection('csat')" id="tab-csat" class="tab-btn px-4 py-2 text-sm font-bold rounded-lg transition-all flex items-center gap-2 whitespace-nowrap text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800">
+                <i class="fa-solid fa-brain"></i> CSAT
+            </button>
+        </nav>
+
+        <!-- Big Banner Header with Giant Percentage -->
+        <div id="bannerContainer" class="p-6 sm:p-8 rounded-2xl text-white shadow-xl bg-gradient-to-r from-cyan-700 via-teal-700 to-emerald-800 transition-all duration-300">
+            <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+                <div>
+                    <span class="inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-white/20 backdrop-blur-md mb-2" id="bannerBadge">
+                        EXAM SYLLABUS
+                    </span>
+                    <h2 class="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight" id="bannerTitle">
+                        UPSC CSE
+                    </h2>
+                    <p class="text-sm sm:text-base text-white/80 mt-1" id="bannerSubtitle">
+                        Civil Services Examination Comprehensive Tracker
+                    </p>
+                </div>
+
+                <!-- Giant Percentage Display -->
+                <div class="bg-black/25 backdrop-blur-md border border-white/10 rounded-2xl p-4 sm:p-5 flex flex-col items-center justify-center min-w-[170px] text-center self-stretch md:self-auto shadow-inner">
+                    <span class="text-xs uppercase tracking-widest text-white/70 font-semibold mb-1">OVERALL PROGRESS</span>
+                    <span id="overallPercentage" class="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight text-white drop-shadow-md">
+                        0%
+                    </span>
+                    <span id="overallRatio" class="text-xs text-white/80 font-medium mt-1">0 of 0 Done</span>
+                </div>
+            </div>
+
+            <!-- Dual Progress Bar -->
+            <div class="mt-6">
+                <div class="w-full h-3 rounded-full bg-black/30 overflow-hidden flex p-0.5">
+                    <div id="doneBar" class="h-full bg-emerald-400 rounded-l-full transition-all duration-300" style="width: 0%"></div>
+                    <div id="inProgressBar" class="h-full bg-amber-400 transition-all duration-300" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <!-- Stats Counters Pills -->
+            <div class="mt-4 flex flex-wrap items-center gap-2 text-xs font-bold">
+                <span class="px-3 py-1 rounded-lg bg-emerald-900/60 border border-emerald-400/40 text-emerald-200 flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                    <span id="doneCount">0 Done</span>
+                </span>
+                <span class="px-3 py-1 rounded-lg bg-amber-900/60 border border-amber-400/40 text-amber-200 flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-amber-400"></span>
+                    <span id="inProgressCount">0 In Progress</span>
+                </span>
+                <span class="px-3 py-1 rounded-lg bg-slate-800/60 border border-slate-400/40 text-slate-200 flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-slate-400"></span>
+                    <span id="pendingCount">0 Pending</span>
+                </span>
+            </div>
+        </div>
+
+        <!-- Big Sub-Tier Switchers: Prelims / Mains or Paper 1 / Paper 2 -->
+        <div id="subTierWrapper" class="flex items-center justify-center">
+            <div class="inline-flex p-1.5 rounded-2xl bg-slate-200 dark:bg-darkcard border border-slate-300 dark:border-darkborder shadow-inner gap-2">
+                <button id="subTierBtn1" onclick="switchSubTier('tier1')"
+                    class="px-6 sm:px-10 py-3 rounded-xl text-base sm:text-xl md:text-2xl font-black tracking-wide transition-all shadow-md bg-white dark:bg-slate-800 text-teal-600 dark:text-teal-400 ring-2 ring-teal-500/30">
+                    <i class="fa-solid fa-layer-group text-sm sm:text-lg mr-2"></i>Prelims
+                </button>
+                <button id="subTierBtn2" onclick="switchSubTier('tier2')"
+                    class="px-6 sm:px-10 py-3 rounded-xl text-base sm:text-xl md:text-2xl font-black tracking-wide transition-all text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">
+                    <i class="fa-solid fa-scroll text-sm sm:text-lg mr-2"></i>Mains
+                </button>
+            </div>
+        </div>
+
+        <!-- Action Bar: Add Topic, Add Subject, Filters -->
+        <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-white dark:bg-darkcard p-4 rounded-xl border border-slate-200 dark:border-darkborder">
+            <div class="flex items-center gap-2 flex-wrap">
+                <!-- Status Filter -->
+                <select id="statusFilter" onchange="applyFilters()" class="text-xs font-semibold px-3 py-2 rounded-lg border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:outline-none">
+                    <option value="all">All Status</option>
+                    <option value="completed">Completed (Done)</option>
+                    <option value="in-progress">In Progress</option>
+                    <option value="pending">Pending</option>
+                </select>
+
+                <!-- Priority Filter -->
+                <select id="priorityFilter" onchange="applyFilters()" class="text-xs font-semibold px-3 py-2 rounded-lg border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:outline-none">
+                    <option value="all">All Priorities</option>
+                    <option value="high">High Priority</option>
+                    <option value="medium">Medium Priority</option>
+                    <option value="low">Low Priority</option>
+                </select>
+
+                <!-- Subject Filter Dropdown -->
+                <select id="subjectFilter" onchange="applyFilters()" class="text-xs font-semibold px-3 py-2 rounded-lg border border-teal-300 dark:border-teal-700/60 bg-teal-50/50 dark:bg-teal-950/30 text-teal-800 dark:text-teal-200 focus:outline-none focus:ring-2 focus:ring-teal-500 max-w-[200px]">
+                    <option value="all">All Subjects</option>
+                </select>
+
+                <span class="text-xs text-slate-400 dark:text-slate-500 hidden xl:inline">
+                    <i class="fa-solid fa-circle-info mr-1"></i>Tap topic to cycle: Pending ➔ Progress ➔ Done
+                </span>
+            </div>
+
+            <!-- Subject & Topic Action Buttons -->
+            <div class="flex items-center gap-2 flex-wrap">
+                <button onclick="openSubjectModal()" class="w-full sm:w-auto px-3.5 py-2 rounded-lg text-xs font-bold border border-teal-600 text-teal-600 dark:text-teal-400 hover:bg-teal-50 dark:hover:bg-teal-950/40 flex items-center justify-center gap-1.5 transition-colors">
+                    <i class="fa-solid fa-folder-plus"></i> <span id="addSubjectBtnText">Add Subject</span>
+                </button>
+                <button onclick="openAddTopicModal()" class="w-full sm:w-auto px-4 py-2 rounded-lg text-xs font-bold bg-teal-600 hover:bg-teal-700 text-white flex items-center justify-center gap-2 shadow-sm">
+                    <i class="fa-solid fa-plus"></i> Add Topic
+                </button>
+            </div>
+        </div>
+
+        <!-- Subjects & Topics Container -->
+        <div id="subjectsListContainer" class="space-y-5">
+            <!-- Dynamically populated -->
+        </div>
+
+    </main>
+
+    <!-- Modal: Customize / Add / Rename Subject -->
+    <div id="subjectModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-darkcard border border-slate-200 dark:border-darkborder rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-100 dark:border-darkborder pb-3">
+                <h3 id="subjectModalTitle" class="text-base font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
+                    <i class="fa-solid fa-folder-plus text-teal-600"></i> Add New Subject
+                </h3>
+                <button onclick="closeSubjectModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-white">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <p id="subjectModalSubtext" class="text-xs text-slate-500 dark:text-slate-400">
+                Adding subject into current active section.
+            </p>
+
+            <input type="hidden" id="editingSubjectId" value="">
+
+            <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">
+                    Subject Name
+                </label>
+                <input type="text" id="subjectNameInput" placeholder="e.g. Science & Technology, Ancient History"
+                    class="w-full text-sm font-medium p-3 rounded-lg border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-teal-500">
+            </div>
+
+            <div class="flex items-center justify-end gap-2 pt-2">
+                <button onclick="closeSubjectModal()" class="px-4 py-2 rounded-lg text-xs font-bold text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800">
+                    Cancel
+                </button>
+                <button onclick="saveCustomSubject()" class="px-5 py-2 rounded-lg text-xs font-bold bg-teal-600 hover:bg-teal-700 text-white shadow-md">
+                    Save Subject
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Add Topic with Priority -->
+    <div id="addTopicModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-darkcard border border-slate-200 dark:border-darkborder rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-100 dark:border-darkborder pb-3">
+                <h3 class="text-base font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
+                    <i class="fa-solid fa-file-circle-plus text-teal-600"></i> Add Topics to Syllabus
+                </h3>
+                <button onclick="closeAddTopicModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-white">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Target Subject</label>
+                <select id="modalSubjectSelect" class="w-full text-xs font-medium p-2.5 rounded-lg border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-teal-500">
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">
+                    Topics (One per line or comma-separated)
+                </label>
+                <textarea id="modalTopicInput" rows="4" placeholder="e.g. Fundamental Rights, DPSP, Preamble"
+                    class="w-full text-xs p-3 rounded-lg border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-teal-500"></textarea>
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">Priority Level</label>
+                <div class="grid grid-cols-3 gap-2">
+                    <button type="button" onclick="selectPriority('high')" id="btn-pri-high"
+                        class="priority-btn py-2 text-xs font-bold rounded-lg border border-rose-300 dark:border-rose-900 bg-rose-500 text-white shadow-sm flex items-center justify-center gap-1.5">
+                        <i class="fa-solid fa-fire"></i> High
+                    </button>
+                    <button type="button" onclick="selectPriority('medium')" id="btn-pri-medium"
+                        class="priority-btn py-2 text-xs font-bold rounded-lg border border-slate-200 dark:border-darkborder bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 flex items-center justify-center gap-1.5">
+                        <i class="fa-solid fa-bolt"></i> Medium
+                    </button>
+                    <button type="button" onclick="selectPriority('low')" id="btn-pri-low"
+                        class="priority-btn py-2 text-xs font-bold rounded-lg border border-slate-200 dark:border-darkborder bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 flex items-center justify-center gap-1.5">
+                        <i class="fa-solid fa-feather"></i> Low
+                    </button>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-end gap-2 pt-2">
+                <button onclick="closeAddTopicModal()" class="px-4 py-2 rounded-lg text-xs font-bold text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800">
+                    Cancel
+                </button>
+                <button onclick="submitNewTopics()" class="px-5 py-2 rounded-lg text-xs font-bold bg-teal-600 hover:bg-teal-700 text-white shadow-md">
+                    Add to Syllabus
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Backup & Restore -->
+    <div id="backupModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-darkcard border border-slate-200 dark:border-darkborder rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-100 dark:border-darkborder pb-3">
+                <h3 class="text-base font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
+                    <i class="fa-solid fa-hard-drive text-teal-600"></i> Backup & Restore Data
+                </h3>
+                <button onclick="toggleBackupModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-white">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <p class="text-xs text-slate-500 dark:text-slate-400">
+                Aapka study data browser ke Local Storage me saved rehta hai. File export karke save rakhein ya nayi device par restore karein.
+            </p>
+
+            <div class="space-y-3 pt-2">
+                <button onclick="exportBackupData()" class="w-full py-2.5 px-4 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-900 text-white dark:bg-slate-700 dark:hover:bg-slate-600 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-download"></i> Export Syllabus Backup (.json)
+                </button>
+
+                <div class="relative">
+                    <input type="file" id="importFileInput" accept=".json" onchange="importBackupData(event)" class="hidden">
+                    <button onclick="document.getElementById('importFileInput').click()" class="w-full py-2.5 px-4 rounded-xl text-xs font-bold border border-slate-300 dark:border-darkborder text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-upload"></i> Restore from JSON Backup
+                    </button>
+                </div>
+
+                <button onclick="resetToDefaultData()" class="w-full py-2 px-4 rounded-xl text-xs font-bold text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-colors">
+                    Reset All to Default Syllabus
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Application Script -->
+    <script>
+        const STORAGE_KEY = 'syllabus_tracker_v3_data';
+        const THEME_KEY = 'syllabus_tracker_theme';
+
+        const defaultData = {
+            upsc: {
+                title: "UPSC CSE",
+                subtitle: "Civil Services Examination Comprehensive Tracker",
+                theme: "from-cyan-700 via-teal-700 to-emerald-800",
+                badge: "CIVIL SERVICES",
+                hasSubTiers: true,
+                tierNames: { tier1: "Prelims", tier2: "Mains" },
+                tier1: [
+                    {
+                        id: "sub_u1",
+                        name: "Indian Polity & Governance",
+                        color: "teal",
+                        topics: [
+                            { id: "t1", text: "Preamble & Salient Features of Constitution", status: "completed", priority: "high" },
+                            { id: "t2", text: "Fundamental Rights, DPSP & Fundamental Duties", status: "in-progress", priority: "high" },
+                            { id: "t3", text: "Union Executive: President, PM & Cabinet", status: "pending", priority: "medium" },
+                            { id: "t4", text: "Judiciary: Supreme Court & High Courts", status: "pending", priority: "high" },
+                            { id: "t5", text: "Panchayati Raj & 73rd/74th Amendments", status: "pending", priority: "medium" }
+                        ]
+                    },
+                    {
+                        id: "sub_u2",
+                        name: "Modern Indian History",
+                        color: "amber",
+                        topics: [
+                            { id: "t6", text: "Revolt of 1857 & Early Resistance", status: "completed", priority: "medium" },
+                            { id: "t7", text: "Socio-Religious Reform Movements", status: "in-progress", priority: "high" },
+                            { id: "t8", text: "Gandhian Era & Mass Movements (1915–1947)", status: "pending", priority: "high" }
+                        ]
+                    },
+                    {
+                        id: "sub_u3",
+                        name: "Indian & World Geography",
+                        color: "sky",
+                        topics: [
+                            { id: "t9", text: "Geomorphology & Plate Tectonics", status: "pending", priority: "medium" },
+                            { id: "t10", text: "Indian Monsoon & Drainage Systems", status: "pending", priority: "high" }
+                        ]
+                    }
+                ],
+                tier2: [
+                    {
+                        id: "sub_um1",
+                        name: "GS Paper II: Governance, Constitution & Polity",
+                        color: "teal",
+                        topics: [
+                            { id: "tm1", text: "Comparison of Indian Constitutional Scheme with World", status: "pending", priority: "high" },
+                            { id: "tm2", text: "Structure, Organisation and Functioning of Ministries", status: "pending", priority: "medium" }
+                        ]
+                    },
+                    {
+                        id: "sub_um2",
+                        name: "GS Paper IV: Ethics, Integrity & Aptitude",
+                        color: "violet",
+                        topics: [
+                            { id: "tm3", text: "Ethics and Human Interface; Moral Philosophers", status: "pending", priority: "high" },
+                            { id: "tm4", text: "Case Studies on Ethical Dilemmas in Administration", status: "pending", priority: "high" }
+                        ]
+                    }
+                ]
+            },
+            bpsc: {
+                title: "BPSC",
+                subtitle: "Bihar Public Service Commission Examination",
+                theme: "from-amber-600 via-orange-600 to-red-700",
+                badge: "STATE PCS",
+                hasSubTiers: true,
+                tierNames: { tier1: "Prelims", tier2: "Mains" },
+                tier1: [
+                    {
+                        id: "sub_b1",
+                        name: "Bihar Special & General Knowledge",
+                        color: "amber",
+                        topics: [
+                            { id: "bt1", text: "History of Bihar & 1857 in Bihar (Kunwar Singh)", status: "pending", priority: "high" },
+                            { id: "bt2", text: "Geography of Bihar: Rivers, Soil & Agro-climatic Zones", status: "pending", priority: "high" },
+                            { id: "bt3", text: "Bihar Economic Survey & State Budget Highlights", status: "pending", priority: "high" }
+                        ]
+                    },
+                    {
+                        id: "sub_b2",
+                        name: "General Science & Mental Ability",
+                        color: "emerald",
+                        topics: [
+                            { id: "bt4", text: "Everyday Physics & Optics", status: "pending", priority: "medium" },
+                            { id: "bt5", text: "Biology: Human Physiology & Diseases", status: "pending", priority: "high" }
+                        ]
+                    }
+                ],
+                tier2: [
+                    {
+                        id: "sub_bm1",
+                        name: "GS Paper I: Modern History & Statistical Analysis",
+                        color: "amber",
+                        topics: [
+                            { id: "bmt1", text: "Santhal Uprising & Birsa Munda Movement", status: "pending", priority: "high" },
+                            { id: "bmt2", text: "Statistical Graphs, Diagrams & Data Analysis", status: "pending", priority: "high" }
+                        ]
+                    }
+                ]
+            },
+            psir: {
+                title: "PSIR Optional",
+                subtitle: "Political Science & International Relations",
+                theme: "from-blue-700 via-indigo-700 to-slate-900",
+                badge: "OPTIONAL SUBJECT",
+                hasSubTiers: true,
+                tierNames: { tier1: "Paper 1", tier2: "Paper 2" },
+                tier1: [
+                    {
+                        id: "sub_p1",
+                        name: "Section A: Political Theory & Thinkers",
+                        color: "indigo",
+                        topics: [
+                            { id: "pt1", text: "Plato: Justice, Philosopher King, Ideal State", status: "completed", priority: "high" },
+                            { id: "pt2", text: "Aristotle: Theory of State, Slavery & Revolution", status: "in-progress", priority: "high" },
+                            { id: "pt3", text: "Machiavelli, Hobbes, Locke & Rousseau", status: "pending", priority: "high" },
+                            { id: "pt4", text: "Karl Marx: Historical Materialism & Alienation", status: "pending", priority: "high" },
+                            { id: "pt5", text: "Gramsci: Hegemony & Civil Society", status: "pending", priority: "medium" },
+                            { id: "pt6", text: "B.R. Ambedkar: Social Justice & Annihilation of Caste", status: "pending", priority: "high" }
+                        ]
+                    },
+                    {
+                        id: "sub_p2",
+                        name: "Section B: Indian Government and Politics (IGP)",
+                        color: "blue",
+                        topics: [
+                            { id: "pt7", text: "Making of the Constitution & Ideological Bases", status: "pending", priority: "high" },
+                            { id: "pt8", text: "Caste, Religion & Ethnicity in Indian Politics", status: "pending", priority: "high" }
+                        ]
+                    }
+                ],
+                tier2: [
+                    {
+                        id: "sub_pm1",
+                        name: "Comparative Politics & International Politics",
+                        color: "slate",
+                        topics: [
+                            { id: "pt9", text: "Realist, Liberal and Marxist Theories of IR", status: "pending", priority: "high" },
+                            { id: "pt10", text: "Nuclear Arms Race, NPT, CTBT & Disarmament", status: "pending", priority: "medium" }
+                        ]
+                    },
+                    {
+                        id: "sub_pm2",
+                        name: "India and the World",
+                        color: "indigo",
+                        topics: [
+                            { id: "pt11", text: "India's Foreign Policy Determinants & Non-Alignment", status: "pending", priority: "high" },
+                            { id: "pt12", text: "India-US and India-China Strategic Dynamics", status: "pending", priority: "high" }
+                        ]
+                    }
+                ]
+            },
+            ugc: {
+                title: "UGC NET",
+                subtitle: "Teaching, Research & Political Science Core",
+                theme: "from-violet-800 via-purple-700 to-indigo-900",
+                badge: "NATIONAL ELIGIBILITY TEST",
+                hasSubTiers: true,
+                tierNames: { tier1: "Paper 1 (General)", tier2: "Paper 2 (Core)" },
+                tier1: [
+                    {
+                        id: "sub_u1_g",
+                        name: "Paper 1: Teaching & Research Aptitude",
+                        color: "purple",
+                        topics: [
+                            { id: "ut1", text: "Teaching Concepts, Levels of Teaching & Methods", status: "pending", priority: "high" },
+                            { id: "ut2", text: "Research Aptitude: Steps, Ethics & Thesis Writing", status: "pending", priority: "high" },
+                            { id: "ut3", text: "Communication: Interpersonal & Classroom Barrier Analysis", status: "pending", priority: "medium" },
+                            { id: "ut4", text: "Higher Education System: Governance & Administration", status: "pending", priority: "medium" }
+                        ]
+                    }
+                ],
+                tier2: [
+                    {
+                        id: "sub_u2_c",
+                        name: "Paper 2: Political Science Core",
+                        color: "indigo",
+                        topics: [
+                            { id: "ut5", text: "Unit 1: Political Theory: Concepts of Liberty, Equality, Justice", status: "pending", priority: "high" },
+                            { id: "ut6", text: "Unit 2: Political Thought: Western & Indian Thinkers", status: "pending", priority: "high" },
+                            { id: "ut7", text: "Unit 3: Public Administration: Theories & Principles", status: "pending", priority: "high" }
+                        ]
+                    }
+                ]
+            },
+            ca: {
+                title: "Current Affairs",
+                subtitle: "Monthly Roundups, Reports & Special Economic Surveys",
+                theme: "from-rose-700 via-pink-700 to-red-800",
+                badge: "REGULAR UPDATES",
+                hasSubTiers: false,
+                topicsList: [
+                    {
+                        id: "sub_ca1",
+                        name: "Monthly Current Affairs Modules",
+                        color: "rose",
+                        topics: [
+                            { id: "cat1", text: "National Schemes & Government Initiatives", status: "pending", priority: "high" },
+                            { id: "cat2", text: "International Summits (G20, BRICS, SCO)", status: "pending", priority: "high" },
+                            { id: "cat3", text: "Science & Tech: Space Missions & AI Guidelines", status: "pending", priority: "medium" },
+                            { id: "cat4", text: "Environment: COP Declarations & Biodiversity Protocols", status: "pending", priority: "high" }
+                        ]
+                    },
+                    {
+                        id: "sub_ca2",
+                        name: "Surveys, Indices & Reports",
+                        color: "pink",
+                        topics: [
+                            { id: "cat5", text: "Union Budget & Economic Survey Trends", status: "pending", priority: "high" },
+                            { id: "cat6", text: "NITI Aayog SDG Index & State Indices", status: "pending", priority: "medium" }
+                        ]
+                    }
+                ]
+            },
+            csat: {
+                title: "CSAT",
+                subtitle: "Aptitude, Reasoning & Data Interpretation",
+                theme: "from-sky-700 via-blue-700 to-indigo-800",
+                badge: "PAPER II QUALIFYING",
+                hasSubTiers: false,
+                topicsList: [
+                    {
+                        id: "sub_cs1",
+                        name: "Quantitative Aptitude (Maths)",
+                        color: "sky",
+                        topics: [
+                            { id: "cst1", text: "Number System, Divisibility & Remainders", status: "pending", priority: "high" },
+                            { id: "cst2", text: "Percentages, Profit & Loss", status: "pending", priority: "high" },
+                            { id: "cst3", text: "Ratio, Proportion & Mixtures", status: "pending", priority: "medium" },
+                            { id: "cst4", text: "Time, Speed & Distance (Trains, Boats)", status: "pending", priority: "high" },
+                            { id: "cst5", text: "Time & Work, Pipes & Cisterns", status: "pending", priority: "medium" },
+                            { id: "cst6", text: "Permutation, Combination & Basic Probability", status: "pending", priority: "high" }
+                        ]
+                    },
+                    {
+                        id: "sub_cs2",
+                        name: "Logical & Analytical Reasoning",
+                        color: "blue",
+                        topics: [
+                            { id: "cst7", text: "Syllogisms & Deductive Logic", status: "pending", priority: "high" },
+                            { id: "cst8", text: "Blood Relations & Family Trees", status: "pending", priority: "medium" },
+                            { id: "cst9", text: "Direction Sense & Positional Mapping", status: "pending", priority: "low" },
+                            { id: "cst10", text: "Seating Arrangement & Linear Puzzles", status: "pending", priority: "high" },
+                            { id: "cst11", text: "Coding-Decoding & Series Completion", status: "pending", priority: "medium" }
+                        ]
+                    },
+                    {
+                        id: "sub_cs3",
+                        name: "Reading Comprehension",
+                        color: "indigo",
+                        topics: [
+                            { id: "cst12", text: "Crux, Central Theme & Main Idea Identification", status: "pending", priority: "high" },
+                            { id: "cst13", text: "Logical Corollaries & Assumptions Extraction", status: "pending", priority: "high" },
+                            { id: "cst14", text: "Inference & Implicit Conclusion Questions", status: "pending", priority: "high" }
+                        ]
+                    },
+                    {
+                        id: "sub_cs4",
+                        name: "Data Interpretation & Sufficiency",
+                        color: "teal",
+                        topics: [
+                            { id: "cst15", text: "Bar Graphs, Histograms & Pie Charts", status: "pending", priority: "medium" },
+                            { id: "cst16", text: "Data Tables & Numerical Comparison Statements", status: "pending", priority: "medium" },
+                            { id: "cst17", text: "Statement Data Sufficiency Problems", status: "pending", priority: "high" }
+                        ]
+                    }
+                ]
+            }
+        };
+
+        let appData = {};
+        let currentSectionKey = 'upsc';
+        let currentSubTier = 'tier1';
+        let activePrioritySelect = 'high';
+        let searchQuery = '';
+
+        function initApp() {
+            loadTheme();
+            loadAppData();
+            renderCurrentView();
+        }
+
+        function loadTheme() {
+            const saved = localStorage.getItem(THEME_KEY);
+            if (saved === 'dark' || (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        }
+
+        function toggleTheme() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.setItem(THEME_KEY, isDark ? 'dark' : 'light');
+        }
+
+        function toggleFullScreen() {
+            const icon = document.getElementById('fsIcon');
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(() => {});
+                icon.classList.remove('fa-expand');
+                icon.classList.add('fa-compress');
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                    icon.classList.remove('fa-compress');
+                    icon.classList.add('fa-expand');
+                }
+            }
+        }
+
+        function loadAppData() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved) {
+                try {
+                    appData = JSON.parse(saved);
+                    ensureSchemaIntegrity();
+                } catch(e) {
+                    appData = JSON.parse(JSON.stringify(defaultData));
+                }
+            } else {
+                appData = JSON.parse(JSON.stringify(defaultData));
+            }
+        }
+
+        function saveAppData() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
+        }
+
+        function ensureSchemaIntegrity() {
+            if (appData.upsc) appData.upsc.theme = "from-cyan-700 via-teal-700 to-emerald-800";
+            if (appData.ugc) appData.ugc.theme = "from-violet-800 via-purple-700 to-indigo-900";
+
+            for (let secKey in appData) {
+                const sec = appData[secKey];
+                const listArrays = sec.hasSubTiers ? [sec.tier1 || [], sec.tier2 || []] : [sec.topicsList || []];
+                listArrays.forEach(arr => {
+                    arr.forEach(sub => {
+                        if (Array.isArray(sub.topics)) {
+                            sub.topics.forEach(t => {
+                                if (t.completed === true && !t.status) t.status = "completed";
+                                if (!t.status) t.status = "pending";
+                                if (!t.priority) t.priority = "medium";
+                            });
+                        }
+                    });
+                });
+            }
+        }
+
+        function switchSection(secKey) {
+            currentSectionKey = secKey;
+            currentSubTier = 'tier1';
+            searchQuery = '';
+            const searchInput = document.getElementById('searchInput');
+            if (searchInput) searchInput.value = '';
+
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.className = "tab-btn px-4 py-2 text-sm font-bold rounded-lg transition-all flex items-center gap-2 whitespace-nowrap text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800";
+            });
+            const activeTab = document.getElementById(`tab-${secKey}`);
+            if (activeTab) {
+                activeTab.className = "tab-btn px-4 py-2 text-sm font-bold rounded-lg transition-all flex items-center gap-2 whitespace-nowrap bg-teal-600 text-white shadow-md shadow-teal-500/20";
+            }
+
+            renderCurrentView();
+        }
+
+        function switchSubTier(tier) {
+            currentSubTier = tier;
+            renderCurrentView();
+        }
+
+        function populateSubjectFilter(subjects) {
+            const filterEl = document.getElementById('subjectFilter');
+            const previousVal = filterEl.value;
+            filterEl.innerHTML = '<option value="all">All Subjects</option>';
+
+            subjects.forEach(s => {
+                const opt = document.createElement('option');
+                opt.value = s.id;
+                opt.text = s.name;
+                filterEl.appendChild(opt);
+            });
+
+            if (subjects.some(s => s.id === previousVal)) {
+                filterEl.value = previousVal;
+            } else {
+                filterEl.value = 'all';
+            }
+        }
+
+        function renderCurrentView() {
+            const sec = appData[currentSectionKey];
+            if (!sec) return;
+
+            const banner = document.getElementById('bannerContainer');
+            banner.className = `p-6 sm:p-8 rounded-2xl text-white shadow-xl bg-gradient-to-r ${sec.theme} transition-all duration-300`;
+            document.getElementById('bannerBadge').innerText = sec.badge || 'EXAM SYLLABUS';
+            document.getElementById('bannerTitle').innerText = sec.title;
+            document.getElementById('bannerSubtitle').innerText = sec.subtitle;
+
+            const subTierWrapper = document.getElementById('subTierWrapper');
+            const subBtn1 = document.getElementById('subTierBtn1');
+            const subBtn2 = document.getElementById('subTierBtn2');
+            const addSubBtnText = document.getElementById('addSubjectBtnText');
+
+            if (sec.hasSubTiers) {
+                subTierWrapper.classList.remove('hidden');
+                subBtn1.innerHTML = `<i class="fa-solid fa-layer-group text-sm sm:text-lg mr-2"></i>${sec.tierNames.tier1}`;
+                subBtn2.innerHTML = `<i class="fa-solid fa-scroll text-sm sm:text-lg mr-2"></i>${sec.tierNames.tier2}`;
+
+                const activeClasses = "px-6 sm:px-10 py-3 rounded-xl text-base sm:text-xl md:text-2xl font-black tracking-wide transition-all shadow-md bg-white dark:bg-slate-800 text-teal-600 dark:text-teal-400 ring-2 ring-teal-500/30";
+                const inactiveClasses = "px-6 sm:px-10 py-3 rounded-xl text-base sm:text-xl md:text-2xl font-black tracking-wide transition-all text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white";
+
+                if (currentSubTier === 'tier1') {
+                    subBtn1.className = activeClasses;
+                    subBtn2.className = inactiveClasses;
+                    if (addSubBtnText) addSubBtnText.innerText = `Add Subject to ${sec.tierNames.tier1}`;
+                } else {
+                    subBtn1.className = inactiveClasses;
+                    subBtn2.className = activeClasses;
+                    if (addSubBtnText) addSubBtnText.innerText = `Add Subject to ${sec.tierNames.tier2}`;
+                }
+            } else {
+                subTierWrapper.classList.add('hidden');
+                if (addSubBtnText) addSubBtnText.innerText = "Add Subject";
+            }
+
+            const subjects = getActiveSubjectsList();
+            populateSubjectFilter(subjects);
+            renderSubjectsList(subjects);
+            updateStatistics(subjects);
+        }
+
+        function getActiveSubjectsList() {
+            const sec = appData[currentSectionKey];
+            if (!sec) return [];
+            if (sec.hasSubTiers) {
+                return currentSubTier === 'tier1' ? (sec.tier1 || []) : (sec.tier2 || []);
+            }
+            return sec.topicsList || [];
+        }
+
+        function renderSubjectsList(subjects) {
+            const container = document.getElementById('subjectsListContainer');
+            container.innerHTML = '';
+
+            const statusFilter = document.getElementById('statusFilter').value;
+            const priorityFilter = document.getElementById('priorityFilter').value;
+            const subjectFilterVal = document.getElementById('subjectFilter').value;
+
+            if (!subjects || subjects.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-12 bg-white dark:bg-darkcard rounded-2xl border border-slate-200 dark:border-darkborder p-8">
+                        <i class="fa-solid fa-folder-open text-4xl text-slate-300 dark:text-slate-600 mb-3"></i>
+                        <p class="text-sm font-semibold text-slate-500">No subjects found here.</p>
+                        <button onclick="openSubjectModal()" class="mt-4 px-4 py-2 text-xs font-bold text-white bg-teal-600 rounded-lg">
+                            <i class="fa-solid fa-plus mr-1"></i> Add Custom Subject
+                        </button>
+                    </div>`;
+                return;
+            }
+
+            const visibleSubjects = subjectFilterVal === 'all'
+                ? subjects
+                : subjects.filter(s => s.id === subjectFilterVal);
+
+            if (visibleSubjects.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-10 bg-white dark:bg-darkcard rounded-2xl border border-slate-200 dark:border-darkborder p-6">
+                        <p class="text-sm font-bold text-slate-500">No matching subject found.</p>
+                    </div>`;
+                return;
+            }
+
+            visibleSubjects.forEach(subject => {
+                let filteredTopics = (subject.topics || []).filter(topic => {
+                    const matchesSearch = topic.text.toLowerCase().includes(searchQuery.toLowerCase());
+                    const matchesStatus = statusFilter === 'all' || topic.status === statusFilter;
+                    const matchesPriority = priorityFilter === 'all' || topic.priority === priorityFilter;
+                    return matchesSearch && matchesStatus && matchesPriority;
+                });
+
+                const subCard = document.createElement('div');
+                subCard.className = "bg-white dark:bg-darkcard rounded-2xl border border-slate-200 dark:border-darkborder p-5 sm:p-6 shadow-sm transition-all";
+
+                const totalInSub = (subject.topics || []).length;
+                const completedInSub = (subject.topics || []).filter(t => t.status === 'completed').length;
+                const inProgressInSub = (subject.topics || []).filter(t => t.status === 'in-progress').length;
+                const subScore = totalInSub > 0 ? Math.round(((completedInSub + inProgressInSub * 0.5) / totalInSub) * 100) : 0;
+
+                subCard.innerHTML = `
+                    <div class="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-darkborder mb-4 flex-wrap gap-2">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <span class="w-3.5 h-3.5 rounded-full bg-teal-500 flex-shrink-0 shadow-sm shadow-teal-500/50"></span>
+                            <h3 class="text-lg sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight truncate">${subject.name}</h3>
+                        </div>
+                        <div class="flex items-center gap-3 sm:gap-4 flex-shrink-0">
+                            <span class="text-base sm:text-lg font-black text-teal-700 dark:text-teal-300 bg-teal-50 dark:bg-teal-950/60 px-4 py-1.5 rounded-xl border border-teal-200 dark:border-teal-800 shadow-sm">
+                                ${subScore}%
+                            </span>
+                            <button onclick="openAddTopicModal('${subject.id}')" title="Add topic to this subject"
+                                class="text-slate-400 hover:text-teal-600 dark:hover:text-teal-400 p-1.5 transition-transform hover:scale-110">
+                                <i class="fa-solid fa-circle-plus text-2xl sm:text-3xl text-teal-600 dark:text-teal-400"></i>
+                            </button>
+                            <button onclick="editSubjectName('${subject.id}')" title="Rename Subject"
+                                class="text-slate-400 hover:text-amber-500 dark:hover:text-amber-400 p-1.5 transition-transform hover:scale-110">
+                                <i class="fa-solid fa-pen-to-square text-xl sm:text-2xl"></i>
+                            </button>
+                            <button onclick="deleteSubject('${subject.id}')" title="Delete Subject"
+                                class="text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 p-1.5 transition-transform hover:scale-110">
+                                <i class="fa-solid fa-trash-can text-xl sm:text-2xl"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+
+                const topicListDiv = document.createElement('div');
+                topicListDiv.className = "space-y-3";
+
+                if (filteredTopics.length === 0) {
+                    topicListDiv.innerHTML = `<div class="text-xs text-slate-400 py-3 text-center italic">No topics matching current filters.</div>`;
+                } else {
+                    filteredTopics.forEach(topic => {
+                        const row = createTopicRowElement(subject.id, topic);
+                        topicListDiv.appendChild(row);
+                    });
+                }
+
+                subCard.appendChild(topicListDiv);
+                container.appendChild(subCard);
+            });
+        }
+
+        function createTopicRowElement(subjectId, topic) {
+            const div = document.createElement('div');
+            
+            const priConfig = {
+                high: { label: "HIGH", bg: "bg-rose-50 text-rose-600 dark:bg-rose-950/50 dark:text-rose-300 border-rose-300 dark:border-rose-900 font-bold" },
+                medium: { label: "MED", bg: "bg-amber-50 text-amber-600 dark:bg-amber-950/50 dark:text-amber-300 border-amber-300 dark:border-amber-900 font-bold" },
+                low: { label: "LOW", bg: "bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400 border-slate-300 dark:border-slate-700 font-bold" }
+            }[topic.priority || 'medium'];
+
+            let statusBadge = '';
+            let checkIcon = '';
+            let textClass = 'text-slate-800 dark:text-slate-100 font-semibold text-sm sm:text-base md:text-lg';
+            let cardClass = 'bg-slate-50/80 hover:bg-slate-100 dark:bg-slate-800/40 dark:hover:bg-slate-800/70 border-slate-200 dark:border-slate-700';
+
+            if (topic.status === 'completed') {
+                statusBadge = `
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-emerald-500 text-white font-black text-xs sm:text-sm uppercase tracking-wider shadow-sm shadow-emerald-500/30">
+                        <i class="fa-solid fa-check text-xs"></i> Done
+                    </span>`;
+                checkIcon = `
+                    <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-gradient-to-tr from-emerald-600 to-green-500 text-white flex items-center justify-center text-sm sm:text-base shadow-md shadow-emerald-500/30 ring-2 ring-emerald-400/30 flex-shrink-0">
+                        <i class="fa-solid fa-check"></i>
+                    </div>`;
+                textClass = 'line-through text-slate-400 dark:text-slate-500 font-semibold text-sm sm:text-base md:text-lg';
+                cardClass = 'bg-emerald-50/60 dark:bg-emerald-950/20 border-emerald-300 dark:border-emerald-800/60 shadow-sm';
+            } else if (topic.status === 'in-progress') {
+                statusBadge = `
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-gradient-to-r from-amber-500 to-yellow-500 text-white font-black text-xs sm:text-sm uppercase tracking-wider shadow-sm shadow-amber-500/30 animate-pulse">
+                        <i class="fa-solid fa-hourglass-half text-xs"></i> Progress
+                    </span>`;
+                checkIcon = `
+                    <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-gradient-to-tr from-amber-500 to-yellow-400 text-white flex items-center justify-center text-xs sm:text-sm shadow-md shadow-amber-500/40 ring-2 ring-amber-400/40 flex-shrink-0">
+                        <i class="fa-solid fa-hourglass-half"></i>
+                    </div>`;
+                cardClass = 'bg-amber-50/70 dark:bg-amber-950/30 border-amber-300 dark:border-amber-700/60 shadow-sm';
+            } else {
+                statusBadge = `
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-bold text-xs sm:text-sm uppercase tracking-wider">
+                        Pending
+                    </span>`;
+                checkIcon = `
+                    <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl border-2 border-dashed border-slate-300 dark:border-slate-600 hover:border-slate-400 flex items-center justify-center flex-shrink-0 bg-white/50 dark:bg-slate-800/50">
+                        <span class="w-2 h-2 rounded-full bg-slate-300 dark:bg-slate-600"></span>
+                    </div>`;
+            }
+
+            div.className = `flex items-center justify-between p-3.5 sm:p-4 rounded-xl border ${cardClass} cursor-pointer transition-all gap-3 select-none hover:shadow-sm`;
+            
+            div.innerHTML = `
+                <div class="flex items-center gap-3.5 flex-1 min-w-0" onclick="cycleTopicStatus('${subjectId}', '${topic.id}')">
+                    ${checkIcon}
+                    <span class="${textClass} break-words leading-relaxed">${topic.text}</span>
+                </div>
+                <div class="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+                    <span class="text-[11px] sm:text-xs font-black px-2.5 py-1 rounded-lg border ${priConfig.bg}">${priConfig.label}</span>
+                    <div onclick="cycleTopicStatus('${subjectId}', '${topic.id}')">${statusBadge}</div>
+                    <button onclick="deleteTopic('${subjectId}', '${topic.id}')" title="Delete Topic"
+                        class="text-slate-300 hover:text-rose-500 dark:hover:text-rose-400 p-1.5 ml-1 text-sm sm:text-base transition-colors">
+                        <i class="fa-solid fa-trash-can"></i>
+                    </button>
+                </div>
+            `;
+
+            return div;
+        }
+
+        function cycleTopicStatus(subjectId, topicId) {
+            const subjects = getActiveSubjectsList();
+            const subject = subjects.find(s => s.id === subjectId);
+            if (!subject) return;
+
+            const topic = subject.topics.find(t => t.id === topicId);
+            if (!topic) return;
+
+            if (topic.status === 'pending') {
+                topic.status = 'in-progress';
+            } else if (topic.status === 'in-progress') {
+                topic.status = 'completed';
+            } else {
+                topic.status = 'pending';
+            }
+
+            saveAppData();
+            renderCurrentView();
+        }
+
+        function deleteTopic(subjectId, topicId) {
+            if (!confirm("Are you sure you want to remove this topic?")) return;
+            const subjects = getActiveSubjectsList();
+            const subject = subjects.find(s => s.id === subjectId);
+            if (!subject) return;
+
+            subject.topics = subject.topics.filter(t => t.id !== topicId);
+            saveAppData();
+            renderCurrentView();
+        }
+
+        function openSubjectModal(subjectId = null) {
+            const sec = appData[currentSectionKey];
+            const modalTitle = document.getElementById('subjectModalTitle');
+            const modalSubtext = document.getElementById('subjectModalSubtext');
+            const input = document.getElementById('subjectNameInput');
+            const editingId = document.getElementById('editingSubjectId');
+
+            let targetTierName = "";
+            if (sec.hasSubTiers) {
+                targetTierName = currentSubTier === 'tier1' ? sec.tierNames.tier1 : sec.tierNames.tier2;
+                modalSubtext.innerText = `Adding/Modifying subject in ${sec.title} (${targetTierName})`;
+            } else {
+                modalSubtext.innerText = `Adding/Modifying subject in ${sec.title}`;
+            }
+
+            if (subjectId) {
+                const subjects = getActiveSubjectsList();
+                const sub = subjects.find(s => s.id === subjectId);
+                editingId.value = subjectId;
+                input.value = sub ? sub.name : '';
+                modalTitle.innerHTML = `<i class="fa-solid fa-pen-to-square text-amber-500"></i> Rename Subject`;
+            } else {
+                editingId.value = '';
+                input.value = '';
+                modalTitle.innerHTML = `<i class="fa-solid fa-folder-plus text-teal-600"></i> Add New Subject`;
+            }
+
+            document.getElementById('subjectModal').classList.remove('hidden');
+            setTimeout(() => input.focus(), 50);
+        }
+
+        function closeSubjectModal() {
+            document.getElementById('subjectModal').classList.add('hidden');
+            document.getElementById('editingSubjectId').value = '';
+            document.getElementById('subjectNameInput').value = '';
+        }
+
+        function editSubjectName(subjectId) {
+            openSubjectModal(subjectId);
+        }
+
+        function saveCustomSubject() {
+            const name = document.getElementById('subjectNameInput').value.trim();
+            const editingId = document.getElementById('editingSubjectId').value;
+
+            if (!name) {
+                alert("Please enter a subject name.");
+                return;
+            }
+
+            const sec = appData[currentSectionKey];
+            let targetList;
+            if (sec.hasSubTiers) {
+                if (currentSubTier === 'tier1') {
+                    if (!sec.tier1) sec.tier1 = [];
+                    targetList = sec.tier1;
+                } else {
+                    if (!sec.tier2) sec.tier2 = [];
+                    targetList = sec.tier2;
+                }
+            } else {
+                if (!sec.topicsList) sec.topicsList = [];
+                targetList = sec.topicsList;
+            }
+
+            if (editingId) {
+                const sub = targetList.find(s => s.id === editingId);
+                if (sub) {
+                    sub.name = name;
+                }
+            } else {
+                targetList.push({
+                    id: 'sub_custom_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
+                    name: name,
+                    color: "teal",
+                    topics: []
+                });
+            }
+
+            saveAppData();
+            closeSubjectModal();
+            renderCurrentView();
+        }
+
+        function deleteSubject(subjectId) {
+            const subjects = getActiveSubjectsList();
+            const sub = subjects.find(s => s.id === subjectId);
+            if (!sub) return;
+
+            const count = (sub.topics || []).length;
+            const confirmMsg = count > 0 
+                ? `Subject "${sub.name}" contains ${count} topics. Do you want to delete this subject and all its topics?`
+                : `Are you sure you want to delete subject "${sub.name}"?`;
+
+            if (!confirm(confirmMsg)) return;
+
+            const sec = appData[currentSectionKey];
+            if (sec.hasSubTiers) {
+                if (currentSubTier === 'tier1') {
+                    sec.tier1 = sec.tier1.filter(s => s.id !== subjectId);
+                } else {
+                    sec.tier2 = sec.tier2.filter(s => s.id !== subjectId);
+                }
+            } else {
+                sec.topicsList = sec.topicsList.filter(s => s.id !== subjectId);
+            }
+
+            saveAppData();
+            renderCurrentView();
+        }
+
+        function updateStatistics(subjects) {
+            let total = 0;
+            let done = 0;
+            let inProgress = 0;
+
+            subjects.forEach(s => {
+                (s.topics || []).forEach(t => {
+                    total++;
+                    if (t.status === 'completed') done++;
+                    else if (t.status === 'in-progress') inProgress++;
+                });
+            });
+
+            const pending = total - (done + inProgress);
+            const compositeScore = total > 0 ? Math.round(((done + (inProgress * 0.5)) / total) * 100) : 0;
+            const donePercent = total > 0 ? (done / total) * 100 : 0;
+            const inProgressPercent = total > 0 ? (inProgress / total) * 100 : 0;
+
+            document.getElementById('overallPercentage').innerText = `${compositeScore}%`;
+            document.getElementById('overallRatio').innerText = `${done} of ${total} Done`;
+
+            document.getElementById('doneBar').style.width = `${donePercent}%`;
+            document.getElementById('inProgressBar').style.width = `${inProgressPercent}%`;
+
+            document.getElementById('doneCount').innerText = `${done} Done`;
+            document.getElementById('inProgressCount').innerText = `${inProgress} In Progress`;
+            document.getElementById('pendingCount').innerText = `${pending} Pending`;
+        }
+
+        function handleSearch(val) {
+            searchQuery = val.trim();
+            renderSubjectsList(getActiveSubjectsList());
+        }
+
+        function applyFilters() {
+            renderSubjectsList(getActiveSubjectsList());
+        }
+
+        function openAddTopicModal(preselectedSubjectId) {
+            const subjects = getActiveSubjectsList();
+            const selectEl = document.getElementById('modalSubjectSelect');
+            selectEl.innerHTML = '';
+
+            if (subjects.length === 0) {
+                alert("Please add a Subject first before adding topics.");
+                openSubjectModal();
+                return;
+            }
+
+            subjects.forEach(s => {
+                const opt = document.createElement('option');
+                opt.value = s.id;
+                opt.text = s.name;
+                if (preselectedSubjectId && s.id === preselectedSubjectId) opt.selected = true;
+                selectEl.appendChild(opt);
+            });
+
+            selectPriority('high');
+            document.getElementById('modalTopicInput').value = '';
+            document.getElementById('addTopicModal').classList.remove('hidden');
+        }
+
+        function closeAddTopicModal() {
+            document.getElementById('addTopicModal').classList.add('hidden');
+        }
+
+        function selectPriority(level) {
+            activePrioritySelect = level;
+            const btnHigh = document.getElementById('btn-pri-high');
+            const btnMed = document.getElementById('btn-pri-medium');
+            const btnLow = document.getElementById('btn-pri-low');
+
+            const inactiveClass = "priority-btn py-2 text-xs font-bold rounded-lg border border-slate-200 dark:border-darkborder bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 flex items-center justify-center gap-1.5";
+            
+            btnHigh.className = inactiveClass;
+            btnMed.className = inactiveClass;
+            btnLow.className = inactiveClass;
+
+            if (level === 'high') {
+                btnHigh.className = "priority-btn py-2 text-xs font-bold rounded-lg border border-rose-300 dark:border-rose-900 bg-rose-500 text-white shadow-sm flex items-center justify-center gap-1.5";
+            } else if (level === 'medium') {
+                btnMed.className = "priority-btn py-2 text-xs font-bold rounded-lg border border-amber-300 dark:border-amber-900 bg-amber-500 text-white shadow-sm flex items-center justify-center gap-1.5";
+            } else {
+                btnLow.className = "priority-btn py-2 text-xs font-bold rounded-lg border border-slate-400 bg-slate-600 text-white shadow-sm flex items-center justify-center gap-1.5";
+            }
+        }
+
+        function submitNewTopics() {
+            const subjectId = document.getElementById('modalSubjectSelect').value;
+            const rawText = document.getElementById('modalTopicInput').value.trim();
+
+            if (!rawText) {
+                alert("Please write at least one topic.");
+                return;
+            }
+
+            const subjects = getActiveSubjectsList();
+            const subject = subjects.find(s => s.id === subjectId);
+            if (!subject) return;
+
+            const lines = rawText.split(/[\n,]+/).map(t => t.trim()).filter(t => t.length > 0);
+            
+            lines.forEach(text => {
+                subject.topics.push({
+                    id: 't_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
+                    text: text,
+                    status: 'pending',
+                    priority: activePrioritySelect
+                });
+            });
+
+            saveAppData();
+            closeAddTopicModal();
+            renderCurrentView();
+        }
+
+        function toggleBackupModal() {
+            const m = document.getElementById('backupModal');
+            m.classList.toggle('hidden');
+        }
+
+        function exportBackupData() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appData, null, 2));
+            const dl = document.createElement('a');
+            dl.setAttribute("href", dataStr);
+            dl.setAttribute("download", `Syllabus_Backup_${new Date().toISOString().slice(0,10)}.json`);
+            dl.click();
+        }
+
+        function importBackupData(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                try {
+                    const parsed = JSON.parse(evt.target.result);
+                    if (parsed.upsc && parsed.bpsc) {
+                        appData = parsed;
+                        ensureSchemaIntegrity();
+                        saveAppData();
+                        renderCurrentView();
+                        toggleBackupModal();
+                        alert("Backup restored successfully!");
+                    } else {
+                        alert("Invalid backup file structure.");
+                    }
+                } catch(err) {
+                    alert("Failed to parse backup JSON file.");
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function resetToDefaultData() {
+            if (!confirm("Are you sure you want to reset all syllabus data back to initial defaults?")) return;
+            appData = JSON.parse(JSON.stringify(defaultData));
+            saveAppData();
+            renderCurrentView();
+            toggleBackupModal();
+        }
+
+        window.addEventListener('DOMContentLoaded', initApp);
+    </script>
+</body>
+</html>
