@@ -977,7 +977,7 @@
                     </div>`;
             }
 
-            // Check if Next Revision is Due or Overdue
+            // Next Revision Overdue check
             const todayStr = new Date().toISOString().split('T')[0];
             let revisionHighlight = 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300';
             if (topic.nextRevision) {
@@ -1045,7 +1045,6 @@
 
             topic[field] = dateValue;
 
-            // Agar last studied set kiya aur topic pending tha, toh auto progress mark kar sakte hain
             if (field === 'lastStudied' && dateValue && topic.status === 'pending') {
                 topic.status = 'in-progress';
             }
@@ -1070,7 +1069,6 @@
             } else if (topic.status === 'in-progress') {
                 topic.status = 'completed';
                 topic.lastStudied = todayStr;
-                // Auto schedule next revision 7 days later if not already set
                 if (!topic.nextRevision) {
                     const nextDate = new Date();
                     nextDate.setDate(nextDate.getDate() + 7);
