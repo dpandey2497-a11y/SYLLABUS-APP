@@ -664,7 +664,7 @@
             renderCurrentView();
 
             if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.register('./sw.js')
+                navigator.serviceWorker.register('./sw.js?v=101')
                     .then((reg) => console.log('SW Registered', reg))
                     .catch((err) => console.log('SW Registration failed', err));
             }
