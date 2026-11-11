@@ -1,4 +1,5 @@
-const CACHE_NAME = 'my-syllabus-v3';
+const CACHE_NAME = 'my-syllabus-v4';
+
 
 
 
