@@ -42,21 +42,29 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         .custom-scroll::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
+            width: 5px;
+            height: 4px;
         }
         .custom-scroll::-webkit-scrollbar-track {
-            background: rgba(0,0,0,0.05);
+            background: rgba(0,0,0,0.03);
         }
         .custom-scroll::-webkit-scrollbar-thumb {
             background: rgba(200,90,50,0.3);
             border-radius: 4px;
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
         }
         /* Date input overlay for clean pill look */
         .date-pill-wrapper {
             position: relative;
             display: inline-flex;
             align-items: center;
+            flex-shrink: 0;
         }
         .date-pill-wrapper input[type="date"] {
             position: absolute;
@@ -79,21 +87,21 @@
 
     <!-- Top Header -->
     <header class="sticky top-0 z-40 bg-sand/90 dark:bg-darkcard/90 backdrop-blur-md border-b border-peach dark:border-darkborder shadow-sm">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-4">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-terracotta to-amber-600 flex items-center justify-center text-white shadow-md shadow-terracotta/20">
-                    <i class="fa-solid fa-graduation-cap text-lg"></i>
+        <div class="max-w-7xl mx-auto px-3 sm:px-6 py-3 flex items-center justify-between gap-3">
+            <div class="flex items-center gap-2.5 sm:gap-3">
+                <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-terracotta to-amber-600 flex items-center justify-center text-white shadow-md shadow-terracotta/20 flex-shrink-0">
+                    <i class="fa-solid fa-graduation-cap text-base sm:text-lg"></i>
                 </div>
                 <div>
-                    <h1 class="text-lg sm:text-xl font-extrabold tracking-tight bg-gradient-to-r from-stone-900 via-terracotta to-amber-700 dark:from-white dark:via-peach dark:to-amber-300 bg-clip-text text-transparent">
+                    <h1 class="text-base sm:text-xl font-extrabold tracking-tight bg-gradient-to-r from-stone-900 via-terracotta to-amber-700 dark:from-white dark:via-peach dark:to-amber-300 bg-clip-text text-transparent">
                         MY SYLLABUS
                     </h1>
-                    <p class="text-xs text-stone-500 dark:text-stone-400">Target Preparation & Revision Dashboard</p>
+                    <p class="text-[11px] sm:text-xs text-stone-500 dark:text-stone-400">Target Preparation & Revision Dashboard</p>
                 </div>
             </div>
 
             <!-- Header Controls -->
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-1.5 sm:gap-2">
                 <!-- Live Search -->
                 <div class="relative hidden sm:block w-48 md:w-64">
                     <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-xs text-stone-400"></i>
@@ -124,9 +132,9 @@
         </div>
     </header>
 
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-5">
+    <main class="max-w-7xl mx-auto px-3 sm:px-6 py-5 space-y-4 sm:space-y-5">
 
-        <!-- 6 Main Sections Tab Bar -->
+        <!-- 3 Main Sections Tab Bar (UPSC CSE, BPSC, UGC NET) -->
         <nav class="flex items-center gap-2 overflow-x-auto pb-2 custom-scroll border-b border-peach dark:border-darkborder">
             <button onclick="switchSection('upsc')" id="tab-upsc" class="tab-btn px-4 py-2 text-sm font-bold rounded-lg transition-all flex items-center gap-2 whitespace-nowrap bg-terracotta text-white shadow-md shadow-terracotta/20">
                 <i class="fa-solid fa-landmark"></i> UPSC CSE
@@ -134,64 +142,55 @@
             <button onclick="switchSection('bpsc')" id="tab-bpsc" class="tab-btn px-4 py-2 text-sm font-bold rounded-lg transition-all flex items-center gap-2 whitespace-nowrap text-stone-600 dark:text-stone-400 hover:bg-sand dark:hover:bg-darkcard">
                 <i class="fa-solid fa-scale-balanced"></i> BPSC
             </button>
-            <button onclick="switchSection('psir')" id="tab-psir" class="tab-btn px-4 py-2 text-sm font-bold rounded-lg transition-all flex items-center gap-2 whitespace-nowrap text-stone-600 dark:text-stone-400 hover:bg-sand dark:hover:bg-darkcard">
-                <i class="fa-solid fa-book-journal-whills"></i> PSIR Optional
-            </button>
             <button onclick="switchSection('ugc')" id="tab-ugc" class="tab-btn px-4 py-2 text-sm font-bold rounded-lg transition-all flex items-center gap-2 whitespace-nowrap text-stone-600 dark:text-stone-400 hover:bg-sand dark:hover:bg-darkcard">
                 <i class="fa-solid fa-award"></i> UGC NET
-            </button>
-            <button onclick="switchSection('ca')" id="tab-ca" class="tab-btn px-4 py-2 text-sm font-bold rounded-lg transition-all flex items-center gap-2 whitespace-nowrap text-stone-600 dark:text-stone-400 hover:bg-sand dark:hover:bg-darkcard">
-                <i class="fa-solid fa-newspaper"></i> Current Affairs
-            </button>
-            <button onclick="switchSection('csat')" id="tab-csat" class="tab-btn px-4 py-2 text-sm font-bold rounded-lg transition-all flex items-center gap-2 whitespace-nowrap text-stone-600 dark:text-stone-400 hover:bg-sand dark:hover:bg-darkcard">
-                <i class="fa-solid fa-brain"></i> CSAT
             </button>
         </nav>
 
         <!-- Big Banner Header with Giant Percentage -->
-        <div id="bannerContainer" class="p-6 sm:p-8 rounded-2xl text-white shadow-xl bg-gradient-to-r from-terracotta via-amber-700 to-stone-800 transition-all duration-300">
-            <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-                <div>
-                    <span class="inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-white/20 backdrop-blur-md mb-2" id="bannerBadge">
+        <div id="bannerContainer" class="p-5 sm:p-8 rounded-2xl text-white shadow-xl bg-gradient-to-r from-terracotta via-amber-700 to-stone-800 transition-all duration-300">
+            <div class="flex flex-row items-center justify-between gap-4">
+                <div class="min-w-0">
+                    <span class="inline-block px-3 py-1 rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-wider bg-white/20 backdrop-blur-md mb-1.5" id="bannerBadge">
                         EXAM SYLLABUS
                     </span>
-                    <h2 class="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight" id="bannerTitle">
+                    <h2 class="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight truncate" id="bannerTitle">
                         UPSC CSE
                     </h2>
-                    <p class="text-sm sm:text-base text-white/80 mt-1" id="bannerSubtitle">
+                    <p class="text-xs sm:text-base text-white/80 mt-0.5 line-clamp-1" id="bannerSubtitle">
                         Civil Services Examination Comprehensive Tracker
                     </p>
                 </div>
 
                 <!-- Giant Percentage Display -->
-                <div class="bg-black/25 backdrop-blur-md border border-white/10 rounded-2xl p-4 sm:p-5 flex flex-col items-center justify-center min-w-[170px] text-center self-stretch md:self-auto shadow-inner">
-                    <span class="text-xs uppercase tracking-widest text-white/70 font-semibold mb-1">OVERALL PROGRESS</span>
-                    <span id="overallPercentage" class="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight text-white drop-shadow-md">
+                <div class="bg-black/25 backdrop-blur-md border border-white/10 rounded-2xl p-3 sm:p-5 flex flex-col items-center justify-center min-w-[115px] sm:min-w-[170px] text-center flex-shrink-0 shadow-inner">
+                    <span class="text-[9px] sm:text-xs uppercase tracking-widest text-white/70 font-semibold mb-0.5">PROGRESS</span>
+                    <span id="overallPercentage" class="text-3xl sm:text-5xl md:text-6xl font-black tracking-tight text-white drop-shadow-md">
                         0%
                     </span>
-                    <span id="overallRatio" class="text-xs text-white/80 font-medium mt-1">0 of 0 Done</span>
+                    <span id="overallRatio" class="text-[10px] sm:text-xs text-white/80 font-medium mt-0.5">0 of 0 Done</span>
                 </div>
             </div>
 
             <!-- Dual Progress Bar -->
-            <div class="mt-6">
-                <div class="w-full h-3 rounded-full bg-black/30 overflow-hidden flex p-0.5">
+            <div class="mt-4 sm:mt-6">
+                <div class="w-full h-2.5 sm:h-3 rounded-full bg-black/30 overflow-hidden flex p-0.5">
                     <div id="doneBar" class="h-full bg-emerald-400 rounded-l-full transition-all duration-300" style="width: 0%"></div>
                     <div id="inProgressBar" class="h-full bg-amber-400 transition-all duration-300" style="width: 0%"></div>
                 </div>
             </div>
 
             <!-- Stats Counters Pills -->
-            <div class="mt-4 flex flex-wrap items-center gap-2 text-xs font-bold">
-                <span class="px-3 py-1 rounded-lg bg-emerald-900/60 border border-emerald-400/40 text-emerald-200 flex items-center gap-1.5">
+            <div class="mt-3 sm:mt-4 flex flex-wrap items-center gap-2 text-[11px] sm:text-xs font-bold">
+                <span class="px-2.5 py-1 rounded-lg bg-emerald-900/60 border border-emerald-400/40 text-emerald-200 flex items-center gap-1.5">
                     <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
                     <span id="doneCount">0 Done</span>
                 </span>
-                <span class="px-3 py-1 rounded-lg bg-amber-900/60 border border-amber-400/40 text-amber-200 flex items-center gap-1.5">
+                <span class="px-2.5 py-1 rounded-lg bg-amber-900/60 border border-amber-400/40 text-amber-200 flex items-center gap-1.5">
                     <span class="w-2 h-2 rounded-full bg-amber-400"></span>
                     <span id="inProgressCount">0 In Progress</span>
                 </span>
-                <span class="px-3 py-1 rounded-lg bg-stone-800/60 border border-stone-400/40 text-stone-200 flex items-center gap-1.5">
+                <span class="px-2.5 py-1 rounded-lg bg-stone-800/60 border border-stone-400/40 text-stone-200 flex items-center gap-1.5">
                     <span class="w-2 h-2 rounded-full bg-stone-400"></span>
                     <span id="pendingCount">0 Pending</span>
                 </span>
@@ -202,78 +201,78 @@
         <div id="subTierWrapper" class="flex items-center justify-center">
             <div class="inline-flex p-1.5 rounded-2xl bg-sand dark:bg-darkcard border border-peach dark:border-darkborder shadow-inner gap-2">
                 <button id="subTierBtn1" onclick="switchSubTier('tier1')"
-                    class="px-6 sm:px-10 py-3 rounded-xl text-base sm:text-xl md:text-2xl font-black tracking-wide transition-all shadow-md bg-white dark:bg-stone-900 text-terracotta dark:text-peach ring-2 ring-terracotta/30">
-                    <i class="fa-solid fa-layer-group text-sm sm:text-lg mr-2"></i>Prelims
+                    class="px-5 sm:px-10 py-2.5 sm:py-3 rounded-xl text-sm sm:text-xl md:text-2xl font-black tracking-wide transition-all shadow-md bg-white dark:bg-stone-900 text-terracotta dark:text-peach ring-2 ring-terracotta/30">
+                    <i class="fa-solid fa-layer-group text-xs sm:text-lg mr-1.5"></i>Prelims
                 </button>
                 <button id="subTierBtn2" onclick="switchSubTier('tier2')"
-                    class="px-6 sm:px-10 py-3 rounded-xl text-base sm:text-xl md:text-2xl font-black tracking-wide transition-all text-stone-500 dark:text-stone-400 hover:text-stone-900 dark:hover:text-white">
-                    <i class="fa-solid fa-scroll text-sm sm:text-lg mr-2"></i>Mains
+                    class="px-5 sm:px-10 py-2.5 sm:py-3 rounded-xl text-sm sm:text-xl md:text-2xl font-black tracking-wide transition-all text-stone-500 dark:text-stone-400 hover:text-stone-900 dark:hover:text-white">
+                    <i class="fa-solid fa-scroll text-xs sm:text-lg mr-1.5"></i>Mains
                 </button>
             </div>
         </div>
 
-        <!-- Daily Exam Countdown Calendar Card -->
-        <div id="countdownCard" class="bg-white dark:bg-darkcard border-2 border-peach dark:border-darkborder rounded-2xl p-4 sm:p-5 shadow-md flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div class="flex items-center gap-3.5 text-center sm:text-left">
-                <div class="w-12 h-12 rounded-2xl bg-terracotta-light dark:bg-stone-800 border border-peach dark:border-darkborder flex items-center justify-center text-terracotta dark:text-peach flex-shrink-0 shadow-xs">
-                    <i class="fa-solid fa-calendar-check text-xl"></i>
+        <!-- Daily Exam Countdown Calendar Card (Horizontal Fit on All Screens) -->
+        <div id="countdownCard" class="bg-white dark:bg-darkcard border-2 border-peach dark:border-darkborder rounded-2xl p-3.5 sm:p-5 shadow-md flex flex-row items-center justify-between gap-3">
+            <div class="flex items-center gap-3 min-w-0">
+                <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-terracotta-light dark:bg-stone-800 border border-peach dark:border-darkborder flex items-center justify-center text-terracotta dark:text-peach flex-shrink-0 shadow-xs">
+                    <i class="fa-solid fa-calendar-check text-lg sm:text-xl"></i>
                 </div>
-                <div>
-                    <div class="text-[11px] font-extrabold uppercase tracking-widest text-terracotta dark:text-peach">
+                <div class="min-w-0">
+                    <div class="text-[10px] sm:text-[11px] font-extrabold uppercase tracking-widest text-terracotta dark:text-peach">
                         DAILY EXAM COUNTDOWN
                     </div>
-                    <div id="countdownMainText" class="text-lg sm:text-2xl font-black text-stone-900 dark:text-white leading-snug">
-                        72th BPSC Prelims — 54 din shesh hai
+                    <div id="countdownMainText" class="text-base sm:text-2xl font-black text-stone-900 dark:text-white leading-tight truncate">
+                        72th BPSC Prelims — 54 दिन शेष
                     </div>
-                    <div id="countdownTargetDateText" class="text-xs font-semibold text-stone-500 dark:text-stone-400 mt-0.5">
-                        Target Date: 17 Jan 2027
+                    <div id="countdownTargetDateText" class="text-[11px] sm:text-xs font-semibold text-stone-500 dark:text-stone-400 mt-0.5">
+                        Target Date: 17 Jan 27
                     </div>
                 </div>
             </div>
 
-            <button onclick="openCountdownModal()" class="px-4 py-2 rounded-xl text-xs font-bold border border-peach dark:border-darkborder bg-sand/70 dark:bg-stone-800 hover:bg-terracotta hover:text-white dark:hover:bg-terracotta text-stone-700 dark:text-stone-200 transition-colors flex items-center gap-1.5 flex-shrink-0">
-                <i class="fa-solid fa-calendar-days"></i> Set Exam Date
+            <button onclick="openCountdownModal()" class="px-3 py-2 sm:px-4 sm:py-2 rounded-xl text-[11px] sm:text-xs font-bold border border-peach dark:border-darkborder bg-sand/70 dark:bg-stone-800 hover:bg-terracotta hover:text-white dark:hover:bg-terracotta text-stone-700 dark:text-stone-200 transition-colors flex items-center gap-1.5 flex-shrink-0">
+                <i class="fa-solid fa-calendar-days"></i> <span class="hidden xs:inline">Set Date</span><span class="xs:hidden">Date</span>
             </button>
         </div>
 
-        <!-- Action Bar: Add Topic, Add Subject, Filters -->
-        <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-sand/60 dark:bg-darkcard p-4 rounded-xl border border-peach dark:border-darkborder">
-            <div class="flex items-center gap-2 flex-wrap">
+        <!-- Action Bar: Filters & Subject/Topic Buttons -->
+        <div class="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-2.5 bg-sand/60 dark:bg-darkcard p-3 sm:p-4 rounded-xl border border-peach dark:border-darkborder">
+            <div class="flex items-center gap-2 overflow-x-auto no-scrollbar">
                 <!-- Status Filter -->
-                <select id="statusFilter" onchange="applyFilters()" class="text-xs font-semibold px-3 py-2 rounded-lg border border-peach dark:border-darkborder bg-cream dark:bg-stone-900 focus:outline-none">
+                <select id="statusFilter" onchange="applyFilters()" class="text-xs font-semibold px-2.5 py-2 rounded-lg border border-peach dark:border-darkborder bg-cream dark:bg-stone-900 focus:outline-none flex-shrink-0">
                     <option value="all">All Status</option>
-                    <option value="completed">Completed (Done)</option>
+                    <option value="completed">Done</option>
                     <option value="in-progress">In Progress</option>
                     <option value="pending">Pending</option>
                 </select>
 
                 <!-- Priority Filter -->
-                <select id="priorityFilter" onchange="applyFilters()" class="text-xs font-semibold px-3 py-2 rounded-lg border border-peach dark:border-darkborder bg-cream dark:bg-stone-900 focus:outline-none">
+                <select id="priorityFilter" onchange="applyFilters()" class="text-xs font-semibold px-2.5 py-2 rounded-lg border border-peach dark:border-darkborder bg-cream dark:bg-stone-900 focus:outline-none flex-shrink-0">
                     <option value="all">All Priorities</option>
-                    <option value="high">High Priority</option>
-                    <option value="medium">Medium Priority</option>
-                    <option value="low">Low Priority</option>
+                    <option value="high">High</option>
+                    <option value="medium">Medium</option>
+                    <option value="low">Low</option>
                 </select>
 
                 <!-- Subject Filter Dropdown -->
-                <select id="subjectFilter" onchange="applyFilters()" class="text-xs font-semibold px-3 py-2 rounded-lg border border-peach dark:border-darkborder bg-cream dark:bg-stone-900 text-stone-800 dark:text-stone-200 focus:outline-none focus:ring-2 focus:ring-terracotta max-w-[200px]">
+                <select id="subjectFilter" onchange="applyFilters()" class="text-xs font-semibold px-2.5 py-2 rounded-lg border border-peach dark:border-darkborder bg-cream dark:bg-stone-900 text-stone-800 dark:text-stone-200 focus:outline-none focus:ring-2 focus:ring-terracotta max-w-[160px] sm:max-w-[200px] flex-shrink-0">
                     <option value="all">All Subjects</option>
                 </select>
             </div>
 
             <!-- Subject & Topic Action Buttons -->
-            <div class="flex items-center gap-2 flex-wrap">
-                <button onclick="openSubjectModal()" class="w-full sm:w-auto px-3.5 py-2 rounded-lg text-xs font-bold border border-terracotta text-terracotta dark:text-peach hover:bg-terracotta-light dark:hover:bg-darkborder flex items-center justify-center gap-1.5 transition-colors">
+            <div class="flex items-center gap-2">
+                <button onclick="openSubjectModal()" class="flex-1 md:flex-initial px-3 py-2 rounded-lg text-xs font-bold border border-terracotta text-terracotta dark:text-peach hover:bg-terracotta-light dark:hover:bg-darkborder flex items-center justify-center gap-1.5 transition-colors whitespace-nowrap">
                     <i class="fa-solid fa-folder-plus"></i> <span id="addSubjectBtnText">Add Subject</span>
                 </button>
-                <button onclick="openAddTopicModal()" class="w-full sm:w-auto px-4 py-2 rounded-lg text-xs font-bold bg-terracotta hover:bg-terracotta-hover text-white flex items-center justify-center gap-2 shadow-sm transition-colors">
+                <button onclick="openAddTopicModal()" class="flex-1 md:flex-initial px-3.5 py-2 rounded-lg text-xs font-bold bg-terracotta hover:bg-terracotta-hover text-white flex items-center justify-center gap-1.5 shadow-sm transition-colors whitespace-nowrap">
                     <i class="fa-solid fa-plus"></i> Add Topic
                 </button>
             </div>
         </div>
 
         <!-- Subjects & Topics Container -->
-        <div id="subjectsListContainer" class="space-y-6">
+        <div id="subjectsListContainer" class="space-y-5">
             <!-- Dynamically populated -->
         </div>
 
@@ -501,12 +500,8 @@
             upsc_tier2: { label: "UPSC CSE Mains 2027", date: "2027-08-20" },
             bpsc_tier1: { label: "72th BPSC Prelims", date: "2027-01-17" },
             bpsc_tier2: { label: "72th BPSC Mains", date: "2027-03-15" },
-            psir_tier1: { label: "PSIR Optional Paper 1", date: "2027-08-22" },
-            psir_tier2: { label: "PSIR Optional Paper 2", date: "2027-08-22" },
             ugc_tier1:  { label: "UGC NET Paper 1", date: "2027-06-15" },
-            ugc_tier2:  { label: "UGC NET Political Science", date: "2027-06-15" },
-            ca_tier1:   { label: "Current Affairs Target (72th BPSC)", date: "2027-01-17" },
-            csat_tier1: { label: "UPSC CSAT 2027", date: "2027-05-23" }
+            ugc_tier2:  { label: "UGC NET Political Science", date: "2027-06-15" }
         };
 
         const defaultData = {
@@ -611,58 +606,6 @@
                     }
                 ]
             },
-            psir: {
-                title: "PSIR Optional",
-                subtitle: "Political Science & International Relations",
-                theme: "from-stone-700 via-terracotta to-amber-900",
-                badge: "OPTIONAL SUBJECT",
-                hasSubTiers: true,
-                tierNames: { tier1: "Paper 1", tier2: "Paper 2" },
-                tier1: [
-                    {
-                        id: "sub_p1",
-                        name: "Section A: Political Theory & Thinkers",
-                        color: "terracotta",
-                        topics: [
-                            { id: "pt1", text: "Plato: Justice, Philosopher King, Ideal State", status: "completed", priority: "high", lastStudied: "", nextRevision: "" },
-                            { id: "pt2", text: "Aristotle: Theory of State, Slavery & Revolution", status: "in-progress", priority: "high", lastStudied: "", nextRevision: "" },
-                            { id: "pt3", text: "Machiavelli, Hobbes, Locke & Rousseau", status: "pending", priority: "high", lastStudied: "", nextRevision: "" },
-                            { id: "pt4", text: "Karl Marx: Historical Materialism & Alienation", status: "pending", priority: "high", lastStudied: "", nextRevision: "" },
-                            { id: "pt5", text: "Gramsci: Hegemony & Civil Society", status: "pending", priority: "medium", lastStudied: "", nextRevision: "" },
-                            { id: "pt6", text: "B.R. Ambedkar: Social Justice & Annihilation of Caste", status: "pending", priority: "high", lastStudied: "", nextRevision: "" }
-                        ]
-                    },
-                    {
-                        id: "sub_p2",
-                        name: "Section B: Indian Government and Politics (IGP)",
-                        color: "amber",
-                        topics: [
-                            { id: "pt7", text: "Making of the Constitution & Ideological Bases", status: "pending", priority: "high", lastStudied: "", nextRevision: "" },
-                            { id: "pt8", text: "Caste, Religion & Ethnicity in Indian Politics", status: "pending", priority: "high", lastStudied: "", nextRevision: "" }
-                        ]
-                    }
-                ],
-                tier2: [
-                    {
-                        id: "sub_pm1",
-                        name: "Comparative Politics & International Politics",
-                        color: "stone",
-                        topics: [
-                            { id: "pt9", text: "Realist, Liberal and Marxist Theories of IR", status: "pending", priority: "high", lastStudied: "", nextRevision: "" },
-                            { id: "pt10", text: "Nuclear Arms Race, NPT, CTBT & Disarmament", status: "pending", priority: "medium", lastStudied: "", nextRevision: "" }
-                        ]
-                    },
-                    {
-                        id: "sub_pm2",
-                        name: "India and the World",
-                        color: "terracotta",
-                        topics: [
-                            { id: "pt11", text: "India's Foreign Policy Determinants & Non-Alignment", status: "pending", priority: "high", lastStudied: "", nextRevision: "" },
-                            { id: "pt12", text: "India-US and India-China Strategic Dynamics", status: "pending", priority: "high", lastStudied: "", nextRevision: "" }
-                        ]
-                    }
-                ]
-            },
             ugc: {
                 title: "UGC NET",
                 subtitle: "Teaching, Research & Political Science Core",
@@ -695,89 +638,6 @@
                         ]
                     }
                 ]
-            },
-            ca: {
-                title: "Current Affairs",
-                subtitle: "Monthly Roundups, Reports & Special Economic Surveys",
-                theme: "from-terracotta via-red-700 to-amber-900",
-                badge: "REGULAR UPDATES",
-                hasSubTiers: false,
-                topicsList: [
-                    {
-                        id: "sub_ca1",
-                        name: "Monthly Current Affairs Modules",
-                        color: "terracotta",
-                        topics: [
-                            { id: "cat1", text: "National Schemes & Government Initiatives", status: "pending", priority: "high", lastStudied: "", nextRevision: "" },
-                            { id: "cat2", text: "International Summits (G20, BRICS, SCO)", status: "pending", priority: "high", lastStudied: "", nextRevision: "" },
-                            { id: "cat3", text: "Science & Tech: Space Missions & AI Guidelines", status: "pending", priority: "medium", lastStudied: "", nextRevision: "" },
-                            { id: "cat4", text: "Environment: COP Declarations & Biodiversity Protocols", status: "pending", priority: "high", lastStudied: "", nextRevision: "" }
-                        ]
-                    },
-                    {
-                        id: "sub_ca2",
-                        name: "Surveys, Indices & Reports",
-                        color: "amber",
-                        topics: [
-                            { id: "cat5", text: "Union Budget & Economic Survey Trends", status: "pending", priority: "high", lastStudied: "", nextRevision: "" },
-                            { id: "cat6", text: "NITI Aayog SDG Index & State Indices", status: "pending", priority: "medium", lastStudied: "", nextRevision: "" }
-                        ]
-                    }
-                ]
-            },
-            csat: {
-                title: "CSAT",
-                subtitle: "Aptitude, Reasoning & Data Interpretation",
-                theme: "from-stone-800 via-terracotta to-amber-700",
-                badge: "PAPER II QUALIFYING",
-                hasSubTiers: false,
-                topicsList: [
-                    {
-                        id: "sub_cs1",
-                        name: "Quantitative Aptitude (Maths)",
-                        color: "terracotta",
-                        topics: [
-                            { id: "cst1", text: "Number System, Divisibility & Remainders", status: "pending", priority: "high", lastStudied: "", nextRevision: "" },
-                            { id: "cst2", text: "Percentages, Profit & Loss", status: "pending", priority: "high", lastStudied: "", nextRevision: "" },
-                            { id: "cst3", text: "Ratio, Proportion & Mixtures", status: "pending", priority: "medium", lastStudied: "", nextRevision: "" },
-                            { id: "cst4", text: "Time, Speed & Distance (Trains, Boats)", status: "pending", priority: "high", lastStudied: "", nextRevision: "" },
-                            { id: "cst5", text: "Time & Work, Pipes & Cisterns", status: "pending", priority: "medium", lastStudied: "", nextRevision: "" },
-                            { id: "cst6", text: "Permutation, Combination & Basic Probability", status: "pending", priority: "high", lastStudied: "", nextRevision: "" }
-                        ]
-                    },
-                    {
-                        id: "sub_cs2",
-                        name: "Logical & Analytical Reasoning",
-                        color: "amber",
-                        topics: [
-                            { id: "cst7", text: "Syllogisms & Deductive Logic", status: "pending", priority: "high", lastStudied: "", nextRevision: "" },
-                            { id: "cst8", text: "Blood Relations & Family Trees", status: "pending", priority: "medium", lastStudied: "", nextRevision: "" },
-                            { id: "cst9", text: "Direction Sense & Positional Mapping", status: "pending", priority: "low", lastStudied: "", nextRevision: "" },
-                            { id: "cst10", text: "Seating Arrangement & Linear Puzzles", status: "pending", priority: "high", lastStudied: "", nextRevision: "" },
-                            { id: "cst11", text: "Coding-Decoding & Series Completion", status: "pending", priority: "medium", lastStudied: "", nextRevision: "" }
-                        ]
-                    },
-                    {
-                        id: "sub_cs3",
-                        name: "Reading Comprehension",
-                        color: "stone",
-                        topics: [
-                            { id: "cst12", text: "Crux, Central Theme & Main Idea Identification", status: "pending", priority: "high", lastStudied: "", nextRevision: "" },
-                            { id: "cst13", text: "Logical Corollaries & Assumptions Extraction", status: "pending", priority: "high", lastStudied: "", nextRevision: "" },
-                            { id: "cst14", text: "Inference & Implicit Conclusion Questions", status: "pending", priority: "high", lastStudied: "", nextRevision: "" }
-                        ]
-                    },
-                    {
-                        id: "sub_cs4",
-                        name: "Data Interpretation & Sufficiency",
-                        color: "terracotta",
-                        topics: [
-                            { id: "cst15", text: "Bar Graphs, Histograms & Pie Charts", status: "pending", priority: "medium", lastStudied: "", nextRevision: "" },
-                            { id: "cst16", text: "Data Tables & Numerical Comparison Statements", status: "pending", priority: "medium", lastStudied: "", nextRevision: "" },
-                            { id: "cst17", text: "Statement Data Sufficiency Problems", status: "pending", priority: "high", lastStudied: "", nextRevision: "" }
-                        ]
-                    }
-                ]
             }
         };
 
@@ -795,7 +655,7 @@
             renderCurrentView();
 
             if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.register('./sw.js?v=103')
+                navigator.serviceWorker.register('./sw.js?v=104')
                     .then((reg) => console.log('SW Registered', reg))
                     .catch((err) => console.log('SW Registration failed', err));
             }
@@ -881,11 +741,11 @@
             const targetDateEl = document.getElementById('countdownTargetDateText');
 
             if (diffDays > 0) {
-                mainTextEl.innerHTML = `${item.label} — <span class="text-terracotta dark:text-peach underline decoration-peach decoration-2 underline-offset-4">${diffDays} din shesh hai</span>`;
+                mainTextEl.innerHTML = `${item.label} — <span class="text-terracotta dark:text-peach underline decoration-peach decoration-2 underline-offset-4">${diffDays} दिन शेष</span>`;
             } else if (diffDays === 0) {
-                mainTextEl.innerHTML = `${item.label} — <span class="text-emerald-600">Aaj Exam Hai! Best of Luck!</span>`;
+                mainTextEl.innerHTML = `${item.label} — <span class="text-emerald-600">आज परीक्षा है! शुभकामनाएँ!</span>`;
             } else {
-                mainTextEl.innerHTML = `${item.label} — <span class="text-stone-500">Exam Completed (${Math.abs(diffDays)} din pehle)</span>`;
+                mainTextEl.innerHTML = `${item.label} — <span class="text-stone-500">परीक्षा संपन्न (${Math.abs(diffDays)} दिन पहले)</span>`;
             }
 
             targetDateEl.innerText = `Target Date: ${formatDisplayDate(item.date)}`;
@@ -921,23 +781,19 @@
             const saved = localStorage.getItem(STORAGE_KEY);
             if (saved) {
                 try {
-                    appData = JSON.parse(saved);
+                    const parsed = JSON.parse(saved);
+                    // Retain only UPSC, BPSC, UGC NET while preserving user topics
+                    appData = {
+                        upsc: parsed.upsc || JSON.parse(JSON.stringify(defaultData.upsc)),
+                        bpsc: parsed.bpsc || JSON.parse(JSON.stringify(defaultData.bpsc)),
+                        ugc: parsed.ugc || JSON.parse(JSON.stringify(defaultData.ugc))
+                    };
                     ensureSchemaIntegrity();
                 } catch(e) {
                     appData = JSON.parse(JSON.stringify(defaultData));
                 }
             } else {
-                const oldData = localStorage.getItem('syllabus_tracker_v3_data');
-                if (oldData) {
-                    try {
-                        appData = JSON.parse(oldData);
-                        ensureSchemaIntegrity();
-                    } catch(e) {
-                        appData = JSON.parse(JSON.stringify(defaultData));
-                    }
-                } else {
-                    appData = JSON.parse(JSON.stringify(defaultData));
-                }
+                appData = JSON.parse(JSON.stringify(defaultData));
             }
         }
 
@@ -965,6 +821,7 @@
         }
 
         function switchSection(secKey) {
+            if (!appData[secKey]) secKey = 'upsc';
             currentSectionKey = secKey;
             currentSubTier = 'tier1';
             searchQuery = '';
@@ -1011,7 +868,7 @@
             if (!sec) return;
 
             const banner = document.getElementById('bannerContainer');
-            banner.className = `p-6 sm:p-8 rounded-2xl text-white shadow-xl bg-gradient-to-r ${sec.theme} transition-all duration-300`;
+            banner.className = `p-5 sm:p-8 rounded-2xl text-white shadow-xl bg-gradient-to-r ${sec.theme} transition-all duration-300`;
             document.getElementById('bannerBadge').innerText = sec.badge || 'EXAM SYLLABUS';
             document.getElementById('bannerTitle').innerText = sec.title;
             document.getElementById('bannerSubtitle').innerText = sec.subtitle;
@@ -1023,11 +880,11 @@
 
             if (sec.hasSubTiers) {
                 subTierWrapper.classList.remove('hidden');
-                subBtn1.innerHTML = `<i class="fa-solid fa-layer-group text-sm sm:text-lg mr-2"></i>${sec.tierNames.tier1}`;
-                subBtn2.innerHTML = `<i class="fa-solid fa-scroll text-sm sm:text-lg mr-2"></i>${sec.tierNames.tier2}`;
+                subBtn1.innerHTML = `<i class="fa-solid fa-layer-group text-xs sm:text-lg mr-1.5"></i>${sec.tierNames.tier1}`;
+                subBtn2.innerHTML = `<i class="fa-solid fa-scroll text-xs sm:text-lg mr-1.5"></i>${sec.tierNames.tier2}`;
 
-                const activeClasses = "px-6 sm:px-10 py-3 rounded-xl text-base sm:text-xl md:text-2xl font-black tracking-wide transition-all shadow-md bg-white dark:bg-stone-900 text-terracotta dark:text-peach ring-2 ring-terracotta/30";
-                const inactiveClasses = "px-6 sm:px-10 py-3 rounded-xl text-base sm:text-xl md:text-2xl font-black tracking-wide transition-all text-stone-500 dark:text-stone-400 hover:text-stone-900 dark:hover:text-white";
+                const activeClasses = "px-5 sm:px-10 py-2.5 sm:py-3 rounded-xl text-sm sm:text-xl md:text-2xl font-black tracking-wide transition-all shadow-md bg-white dark:bg-stone-900 text-terracotta dark:text-peach ring-2 ring-terracotta/30";
+                const inactiveClasses = "px-5 sm:px-10 py-2.5 sm:py-3 rounded-xl text-sm sm:text-xl md:text-2xl font-black tracking-wide transition-all text-stone-500 dark:text-stone-400 hover:text-stone-900 dark:hover:text-white";
 
                 if (currentSubTier === 'tier1') {
                     subBtn1.className = activeClasses;
@@ -1101,7 +958,7 @@
                 });
 
                 const subSection = document.createElement('div');
-                subSection.className = "bg-sand/50 dark:bg-darkcard/70 rounded-2xl border border-peach dark:border-darkborder p-4 sm:p-6 shadow-sm space-y-4";
+                subSection.className = "bg-sand/50 dark:bg-darkcard/70 rounded-2xl border border-peach dark:border-darkborder p-3.5 sm:p-6 shadow-sm space-y-3.5 sm:space-y-4";
 
                 const totalInSub = (subject.topics || []).length;
                 const completedInSub = (subject.topics || []).filter(t => t.status === 'completed').length;
@@ -1109,33 +966,33 @@
                 const subScore = totalInSub > 0 ? Math.round(((completedInSub + inProgressInSub * 0.5) / totalInSub) * 100) : 0;
 
                 subSection.innerHTML = `
-                    <div class="flex items-center justify-between pb-3 border-b border-peach/70 dark:border-darkborder flex-wrap gap-2">
-                        <div class="flex items-center gap-3 min-w-0">
-                            <span class="w-3.5 h-3.5 rounded-full bg-terracotta flex-shrink-0 shadow-sm shadow-terracotta/50"></span>
-                            <h3 class="text-lg sm:text-2xl font-black text-stone-900 dark:text-white tracking-tight truncate">${subject.name}</h3>
+                    <div class="flex items-center justify-between pb-3 border-b border-peach/70 dark:border-darkborder gap-2">
+                        <div class="flex items-center gap-2.5 min-w-0">
+                            <span class="w-3 h-3 rounded-full bg-terracotta flex-shrink-0 shadow-sm shadow-terracotta/50"></span>
+                            <h3 class="text-base sm:text-2xl font-black text-stone-900 dark:text-white tracking-tight truncate">${subject.name}</h3>
                         </div>
-                        <div class="flex items-center gap-3 sm:gap-4 flex-shrink-0">
-                            <span class="text-base sm:text-lg font-black text-terracotta dark:text-peach bg-white dark:bg-stone-900 px-4 py-1.5 rounded-xl border border-peach dark:border-darkborder shadow-sm">
+                        <div class="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+                            <span class="text-xs sm:text-lg font-black text-terracotta dark:text-peach bg-white dark:bg-stone-900 px-3 py-1 rounded-xl border border-peach dark:border-darkborder shadow-sm">
                                 ${subScore}%
                             </span>
                             <button onclick="openAddTopicModal('${subject.id}')" title="Add topic to this subject"
-                                class="text-stone-400 hover:text-terracotta dark:hover:text-peach p-1.5 transition-transform hover:scale-110">
-                                <i class="fa-solid fa-circle-plus text-2xl sm:text-3xl text-terracotta dark:text-peach"></i>
+                                class="text-stone-400 hover:text-terracotta dark:hover:text-peach p-1 transition-transform hover:scale-110">
+                                <i class="fa-solid fa-circle-plus text-xl sm:text-3xl text-terracotta dark:text-peach"></i>
                             </button>
                             <button onclick="editSubjectName('${subject.id}')" title="Rename Subject"
-                                class="text-stone-400 hover:text-amber-600 dark:hover:text-amber-400 p-1.5 transition-transform hover:scale-110">
-                                <i class="fa-solid fa-pen-to-square text-xl sm:text-2xl"></i>
+                                class="text-stone-400 hover:text-amber-600 dark:hover:text-amber-400 p-1 transition-transform hover:scale-110">
+                                <i class="fa-solid fa-pen-to-square text-lg sm:text-2xl"></i>
                             </button>
                             <button onclick="deleteSubject('${subject.id}')" title="Delete Subject"
-                                class="text-stone-400 hover:text-rose-500 dark:hover:text-rose-400 p-1.5 transition-transform hover:scale-110">
-                                <i class="fa-solid fa-trash-can text-xl sm:text-2xl"></i>
+                                class="text-stone-400 hover:text-rose-500 dark:hover:text-rose-400 p-1 transition-transform hover:scale-110">
+                                <i class="fa-solid fa-trash-can text-lg sm:text-2xl"></i>
                             </button>
                         </div>
                     </div>
                 `;
 
                 const topicListDiv = document.createElement('div');
-                topicListDiv.className = "space-y-3.5";
+                topicListDiv.className = "space-y-3";
 
                 if (filteredTopics.length === 0) {
                     topicListDiv.innerHTML = `<div class="text-xs text-stone-400 py-4 text-center italic bg-white dark:bg-stone-900 rounded-xl">No topics matching current filters.</div>`;
@@ -1155,42 +1012,42 @@
             const card = document.createElement('div');
             const numStr = String(indexNumber).padStart(2, '0');
 
-            // Priority pill style matching reference screenshot
+            // Priority pill style with tap-to-cycle behavior
             const priConfig = {
                 high: {
                     label: "HIGH",
-                    cls: "bg-rose-50 text-rose-700 border-rose-300 dark:bg-rose-950/50 dark:text-rose-300 dark:border-rose-800"
+                    cls: "bg-rose-50 text-rose-700 border-rose-300 dark:bg-rose-950/50 dark:text-rose-300 dark:border-rose-800 hover:bg-rose-100"
                 },
                 medium: {
                     label: "MEDIUM",
-                    cls: "bg-amber-50 text-amber-800 border-amber-300 dark:bg-amber-950/50 dark:text-amber-300 dark:border-amber-800"
+                    cls: "bg-amber-50 text-amber-800 border-amber-300 dark:bg-amber-950/50 dark:text-amber-300 dark:border-amber-800 hover:bg-amber-100"
                 },
                 low: {
                     label: "LOW",
-                    cls: "bg-sky-50 text-sky-700 border-sky-300 dark:bg-sky-950/50 dark:text-sky-300 dark:border-sky-800"
+                    cls: "bg-sky-50 text-sky-700 border-sky-300 dark:bg-sky-950/50 dark:text-sky-300 dark:border-sky-800 hover:bg-sky-100"
                 }
             }[topic.priority || 'medium'];
 
-            // Status button matching reference screenshot
+            // Status button
             let statusBtnHTML = '';
             let titleExtraClass = 'text-stone-900 dark:text-white';
             if (topic.status === 'completed') {
                 statusBtnHTML = `
                     <button onclick="cycleTopicStatus('${subjectId}', '${topic.id}')"
-                        class="px-3.5 py-2 rounded-xl bg-emerald-100 hover:bg-emerald-200 dark:bg-emerald-900/50 text-emerald-800 dark:text-emerald-200 font-bold text-xs sm:text-sm transition-colors">
+                        class="px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-xl bg-emerald-100 hover:bg-emerald-200 dark:bg-emerald-900/50 text-emerald-800 dark:text-emerald-200 font-bold text-xs sm:text-sm transition-colors whitespace-nowrap">
                         Done
                     </button>`;
                 titleExtraClass = 'line-through text-stone-400 dark:text-stone-500';
             } else if (topic.status === 'in-progress') {
                 statusBtnHTML = `
                     <button onclick="cycleTopicStatus('${subjectId}', '${topic.id}')"
-                        class="px-3.5 py-2 rounded-xl bg-amber-100 hover:bg-amber-200 dark:bg-amber-900/50 text-amber-800 dark:text-amber-200 font-bold text-xs sm:text-sm transition-colors">
+                        class="px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-xl bg-amber-100 hover:bg-amber-200 dark:bg-amber-900/50 text-amber-800 dark:text-amber-200 font-bold text-xs sm:text-sm transition-colors whitespace-nowrap">
                         Progress
                     </button>`;
             } else {
                 statusBtnHTML = `
                     <button onclick="cycleTopicStatus('${subjectId}', '${topic.id}')"
-                        class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-stone-800 text-slate-600 dark:text-stone-300 font-bold text-xs sm:text-sm transition-colors">
+                        class="px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-stone-800 text-slate-600 dark:text-stone-300 font-bold text-xs sm:text-sm transition-colors whitespace-nowrap">
                         Pending
                     </button>`;
             }
@@ -1198,45 +1055,46 @@
             const lastStudiedDisplay = formatDisplayDate(topic.lastStudied);
             const nextRevisionDisplay = formatDisplayDate(topic.nextRevision);
 
-            // Pure white card background with big readable typography matching photo
-            card.className = "bg-white dark:bg-stone-900 rounded-2xl p-4 sm:p-5 border border-peach/80 dark:border-darkborder shadow-sm hover:shadow-md transition-all flex items-start sm:items-center justify-between gap-3 sm:gap-4";
+            // Clean horizontal row layout optimized for both Portrait & Landscape
+            card.className = "bg-white dark:bg-stone-900 rounded-2xl p-3 sm:p-5 border border-peach/80 dark:border-darkborder shadow-sm hover:shadow-md transition-all flex items-center justify-between gap-2.5 sm:gap-4";
 
             card.innerHTML = `
                 <!-- Left: Yellow Number Box -->
                 <div onclick="cycleTopicStatus('${subjectId}', '${topic.id}')" title="Tap to change status"
-                    class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-amber-300 dark:bg-amber-500/80 text-stone-900 font-black text-lg sm:text-xl flex items-center justify-center flex-shrink-0 cursor-pointer select-none shadow-xs">
+                    class="w-10 h-10 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-amber-300 dark:bg-amber-500/80 text-stone-900 font-black text-base sm:text-xl flex items-center justify-center flex-shrink-0 cursor-pointer select-none shadow-xs">
                     ${numStr}
                 </div>
 
-                <!-- Middle: Giant Topic Title + Subject Subtitle + 3 Bottom Badges -->
-                <div class="flex-1 min-w-0 space-y-1.5">
+                <!-- Middle: Big Topic Title + Subject Subtitle + Single-Line Horizontal Pills -->
+                <div class="flex-1 min-w-0 space-y-1">
                     <div onclick="cycleTopicStatus('${subjectId}', '${topic.id}')"
-                        class="${titleExtraClass} text-lg sm:text-xl md:text-2xl font-extrabold leading-snug break-words cursor-pointer">
+                        class="${titleExtraClass} text-base sm:text-xl md:text-2xl font-extrabold leading-snug break-words cursor-pointer">
                         ${topic.text}
                     </div>
 
-                    <div class="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-500 dark:text-stone-400 truncate">
+                    <div class="text-[11px] sm:text-sm font-bold uppercase tracking-wider text-slate-500 dark:text-stone-400 truncate">
                         ${subjectName}
                     </div>
 
-                    <!-- Bottom Pills Row: Priority + Last Studied (Green) + Next Revision (Red) -->
-                    <div class="flex flex-wrap items-center gap-2 pt-1">
-                        <!-- Priority Pill -->
-                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg border text-xs font-extrabold ${priConfig.cls}">
-                            <i class="fa-solid fa-flag text-[10px] text-rose-500"></i> ${priConfig.label}
-                        </span>
+                    <!-- Single-Line Horizontal Scrollable Pills Row -->
+                    <div class="flex items-center gap-1.5 sm:gap-2 pt-1 overflow-x-auto no-scrollbar">
+                        <!-- Tap-to-cycle Priority Pill -->
+                        <button type="button" onclick="cycleTopicPriority('${subjectId}', '${topic.id}')" title="Tap to change priority"
+                            class="inline-flex items-center gap-1 px-2 sm:px-3 py-1 rounded-lg border text-[11px] sm:text-xs font-extrabold flex-shrink-0 cursor-pointer transition-colors ${priConfig.cls}">
+                            <i class="fa-solid fa-flag text-[9px] text-rose-500"></i> ${priConfig.label}
+                        </button>
 
                         <!-- Last Studied Pill (Always Green) -->
-                        <div class="date-pill-wrapper px-3 py-1 rounded-lg border border-emerald-400 dark:border-emerald-600 bg-emerald-50 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-200 text-xs font-bold shadow-2xs">
-                            <i class="fa-solid fa-calendar-check text-emerald-600 dark:text-emerald-400 mr-1.5"></i>
+                        <div class="date-pill-wrapper px-2 sm:px-3 py-1 rounded-lg border border-emerald-400 dark:border-emerald-600 bg-emerald-50 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-200 text-[11px] sm:text-xs font-bold shadow-2xs whitespace-nowrap">
+                            <i class="fa-solid fa-calendar-check text-emerald-600 dark:text-emerald-400 mr-1"></i>
                             <span>Last Studied: ${lastStudiedDisplay}</span>
                             <input type="date" value="${topic.lastStudied || ''}"
                                 onchange="updateTopicDate('${subjectId}', '${topic.id}', 'lastStudied', this.value)">
                         </div>
 
                         <!-- Next Revision Pill (Always Red) -->
-                        <div class="date-pill-wrapper px-3 py-1 rounded-lg border border-rose-400 dark:border-rose-600 bg-rose-50 dark:bg-rose-950/50 text-rose-700 dark:text-rose-200 text-xs font-bold shadow-2xs">
-                            <i class="fa-solid fa-clock-rotate-left text-rose-600 dark:text-rose-400 mr-1.5"></i>
+                        <div class="date-pill-wrapper px-2 sm:px-3 py-1 rounded-lg border border-rose-400 dark:border-rose-600 bg-rose-50 dark:bg-rose-950/50 text-rose-700 dark:text-rose-200 text-[11px] sm:text-xs font-bold shadow-2xs whitespace-nowrap">
+                            <i class="fa-solid fa-clock-rotate-left text-rose-600 dark:text-rose-400 mr-1"></i>
                             <span>Next Revision: ${nextRevisionDisplay}</span>
                             <input type="date" value="${topic.nextRevision || ''}"
                                 onchange="updateTopicDate('${subjectId}', '${topic.id}', 'nextRevision', this.value)">
@@ -1244,23 +1102,39 @@
                     </div>
                 </div>
 
-                <!-- Right: Status Button + Edit Pencil + Delete Cross -->
-                <div class="flex items-center gap-1.5 sm:gap-2 flex-shrink-0 self-center">
+                <!-- Right: Compact Status + Edit Pencil + Delete Cross -->
+                <div class="flex items-center gap-1 sm:gap-2 flex-shrink-0">
                     ${statusBtnHTML}
 
                     <button onclick="openEditTopicModal('${subjectId}', '${topic.id}')" title="Edit Topic"
-                        class="w-9 h-9 rounded-xl bg-amber-50 hover:bg-amber-100 dark:bg-stone-800 text-amber-600 dark:text-amber-400 flex items-center justify-center transition-colors">
+                        class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-amber-50 hover:bg-amber-100 dark:bg-stone-800 text-amber-600 dark:text-amber-400 flex items-center justify-center transition-colors">
                         <i class="fa-solid fa-pencil text-xs sm:text-sm"></i>
                     </button>
 
                     <button onclick="deleteTopic('${subjectId}', '${topic.id}')" title="Delete Topic"
-                        class="w-9 h-9 rounded-xl bg-rose-50 hover:bg-rose-100 dark:bg-stone-800 text-rose-500 dark:text-rose-400 flex items-center justify-center transition-colors">
-                        <i class="fa-solid fa-xmark text-sm sm:text-base"></i>
+                        class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-rose-50 hover:bg-rose-100 dark:bg-stone-800 text-rose-500 dark:text-rose-400 flex items-center justify-center transition-colors">
+                        <i class="fa-solid fa-xmark text-xs sm:text-base"></i>
                     </button>
                 </div>
             `;
 
             return card;
+        }
+
+        function cycleTopicPriority(subjectId, topicId) {
+            const subjects = getActiveSubjectsList();
+            const subject = subjects.find(s => s.id === subjectId);
+            if (!subject) return;
+
+            const topic = subject.topics.find(t => t.id === topicId);
+            if (!topic) return;
+
+            const order = ['high', 'medium', 'low'];
+            const currentIdx = order.indexOf(topic.priority || 'medium');
+            topic.priority = order[(currentIdx + 1) % order.length];
+
+            saveAppData();
+            renderCurrentView();
         }
 
         function openEditTopicModal(subjectId, topicId) {
@@ -1622,8 +1496,12 @@
             reader.onload = function(evt) {
                 try {
                     const parsed = JSON.parse(evt.target.result);
-                    if (parsed.upsc && parsed.bpsc) {
-                        appData = parsed;
+                    if (parsed.upsc || parsed.bpsc || parsed.ugc) {
+                        appData = {
+                            upsc: parsed.upsc || JSON.parse(JSON.stringify(defaultData.upsc)),
+                            bpsc: parsed.bpsc || JSON.parse(JSON.stringify(defaultData.bpsc)),
+                            ugc: parsed.ugc || JSON.parse(JSON.stringify(defaultData.ugc))
+                        };
                         ensureSchemaIntegrity();
                         saveAppData();
                         renderCurrentView();
