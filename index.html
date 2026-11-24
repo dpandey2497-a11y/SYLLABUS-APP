@@ -655,7 +655,7 @@
             renderCurrentView();
 
             if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.register('./sw.js?v=104')
+                navigator.serviceWorker.register('./sw.js?v=105')
                     .then((reg) => console.log('SW Registered', reg))
                     .catch((err) => console.log('SW Registration failed', err));
             }
@@ -782,7 +782,6 @@
             if (saved) {
                 try {
                     const parsed = JSON.parse(saved);
-                    // Retain only UPSC, BPSC, UGC NET while preserving user topics
                     appData = {
                         upsc: parsed.upsc || JSON.parse(JSON.stringify(defaultData.upsc)),
                         bpsc: parsed.bpsc || JSON.parse(JSON.stringify(defaultData.bpsc)),
@@ -1055,32 +1054,51 @@
             const lastStudiedDisplay = formatDisplayDate(topic.lastStudied);
             const nextRevisionDisplay = formatDisplayDate(topic.nextRevision);
 
-            // Clean horizontal row layout optimized for both Portrait & Landscape
-            card.className = "bg-white dark:bg-stone-900 rounded-2xl p-3 sm:p-5 border border-peach/80 dark:border-darkborder shadow-sm hover:shadow-md transition-all flex items-center justify-between gap-2.5 sm:gap-4";
+            // Clean layout with full visible dates (no right-to-left clipping)
+            card.className = "bg-white dark:bg-stone-900 rounded-2xl p-3.5 sm:p-5 border border-peach/80 dark:border-darkborder shadow-sm hover:shadow-md transition-all flex items-start sm:items-center justify-between gap-2.5 sm:gap-4";
 
             card.innerHTML = `
                 <!-- Left: Yellow Number Box -->
                 <div onclick="cycleTopicStatus('${subjectId}', '${topic.id}')" title="Tap to change status"
-                    class="w-10 h-10 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-amber-300 dark:bg-amber-500/80 text-stone-900 font-black text-base sm:text-xl flex items-center justify-center flex-shrink-0 cursor-pointer select-none shadow-xs">
+                    class="w-10 h-10 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-amber-300 dark:bg-amber-500/80 text-stone-900 font-black text-base sm:text-xl flex items-center justify-center flex-shrink-0 cursor-pointer select-none shadow-xs mt-0.5 sm:mt-0">
                     ${numStr}
                 </div>
 
-                <!-- Middle: Big Topic Title + Subject Subtitle + Single-Line Horizontal Pills -->
-                <div class="flex-1 min-w-0 space-y-1">
-                    <div onclick="cycleTopicStatus('${subjectId}', '${topic.id}')"
-                        class="${titleExtraClass} text-base sm:text-xl md:text-2xl font-extrabold leading-snug break-words cursor-pointer">
-                        ${topic.text}
+                <!-- Middle: Big Topic Title + Subject Subtitle + Full Visible Pills -->
+                <div class="flex-1 min-w-0 space-y-1.5">
+                    <div class="flex items-start justify-between gap-2">
+                        <div class="min-w-0 flex-1">
+                            <div onclick="cycleTopicStatus('${subjectId}', '${topic.id}')"
+                                class="${titleExtraClass} text-base sm:text-xl md:text-2xl font-extrabold leading-snug break-words cursor-pointer">
+                                ${topic.text}
+                            </div>
+
+                            <div class="text-[11px] sm:text-sm font-bold uppercase tracking-wider text-slate-500 dark:text-stone-400 truncate mt-0.5">
+                                ${subjectName}
+                            </div>
+                        </div>
+
+                        <!-- Right Actions -->
+                        <div class="flex items-center gap-1 sm:gap-2 flex-shrink-0">
+                            ${statusBtnHTML}
+
+                            <button onclick="openEditTopicModal('${subjectId}', '${topic.id}')" title="Edit Topic"
+                                class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-amber-50 hover:bg-amber-100 dark:bg-stone-800 text-amber-600 dark:text-amber-400 flex items-center justify-center transition-colors">
+                                <i class="fa-solid fa-pencil text-xs sm:text-sm"></i>
+                            </button>
+
+                            <button onclick="deleteTopic('${subjectId}', '${topic.id}')" title="Delete Topic"
+                                class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-rose-50 hover:bg-rose-100 dark:bg-stone-800 text-rose-500 dark:text-rose-400 flex items-center justify-center transition-colors">
+                                <i class="fa-solid fa-xmark text-xs sm:text-base"></i>
+                            </button>
+                        </div>
                     </div>
 
-                    <div class="text-[11px] sm:text-sm font-bold uppercase tracking-wider text-slate-500 dark:text-stone-400 truncate">
-                        ${subjectName}
-                    </div>
-
-                    <!-- Single-Line Horizontal Scrollable Pills Row -->
-                    <div class="flex items-center gap-1.5 sm:gap-2 pt-1 overflow-x-auto no-scrollbar">
+                    <!-- Full Visible Pills Row (Wraps cleanly so full dates always show without scrolling) -->
+                    <div class="flex flex-wrap items-center gap-1.5 sm:gap-2 pt-0.5">
                         <!-- Tap-to-cycle Priority Pill -->
                         <button type="button" onclick="cycleTopicPriority('${subjectId}', '${topic.id}')" title="Tap to change priority"
-                            class="inline-flex items-center gap-1 px-2 sm:px-3 py-1 rounded-lg border text-[11px] sm:text-xs font-extrabold flex-shrink-0 cursor-pointer transition-colors ${priConfig.cls}">
+                            class="inline-flex items-center gap-1 px-2 sm:px-3 py-1 rounded-lg border text-[11px] sm:text-xs font-extrabold cursor-pointer transition-colors ${priConfig.cls}">
                             <i class="fa-solid fa-flag text-[9px] text-rose-500"></i> ${priConfig.label}
                         </button>
 
@@ -1100,21 +1118,6 @@
                                 onchange="updateTopicDate('${subjectId}', '${topic.id}', 'nextRevision', this.value)">
                         </div>
                     </div>
-                </div>
-
-                <!-- Right: Compact Status + Edit Pencil + Delete Cross -->
-                <div class="flex items-center gap-1 sm:gap-2 flex-shrink-0">
-                    ${statusBtnHTML}
-
-                    <button onclick="openEditTopicModal('${subjectId}', '${topic.id}')" title="Edit Topic"
-                        class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-amber-50 hover:bg-amber-100 dark:bg-stone-800 text-amber-600 dark:text-amber-400 flex items-center justify-center transition-colors">
-                        <i class="fa-solid fa-pencil text-xs sm:text-sm"></i>
-                    </button>
-
-                    <button onclick="deleteTopic('${subjectId}', '${topic.id}')" title="Delete Topic"
-                        class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-rose-50 hover:bg-rose-100 dark:bg-stone-800 text-rose-500 dark:text-rose-400 flex items-center justify-center transition-colors">
-                        <i class="fa-solid fa-xmark text-xs sm:text-base"></i>
-                    </button>
                 </div>
             `;
 
