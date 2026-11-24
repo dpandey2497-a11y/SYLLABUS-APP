@@ -52,12 +52,26 @@
             background: rgba(200,90,50,0.3);
             border-radius: 4px;
         }
-        input[type="date"]::-webkit-calendar-picker-indicator {
-            cursor: pointer;
-            filter: invert(0.4);
+        /* Date input overlay for clean pill look */
+        .date-pill-wrapper {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
         }
-        .dark input[type="date"]::-webkit-calendar-picker-indicator {
-            filter: invert(0.8);
+        .date-pill-wrapper input[type="date"] {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+        .date-pill-wrapper input[type="date"]::-webkit-calendar-picker-indicator {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -110,7 +124,7 @@
         </div>
     </header>
 
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6">
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-5">
 
         <!-- 6 Main Sections Tab Bar -->
         <nav class="flex items-center gap-2 overflow-x-auto pb-2 custom-scroll border-b border-peach dark:border-darkborder">
@@ -198,6 +212,30 @@
             </div>
         </div>
 
+        <!-- Daily Exam Countdown Calendar Card -->
+        <div id="countdownCard" class="bg-white dark:bg-darkcard border-2 border-peach dark:border-darkborder rounded-2xl p-4 sm:p-5 shadow-md flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-3.5 text-center sm:text-left">
+                <div class="w-12 h-12 rounded-2xl bg-terracotta-light dark:bg-stone-800 border border-peach dark:border-darkborder flex items-center justify-center text-terracotta dark:text-peach flex-shrink-0 shadow-xs">
+                    <i class="fa-solid fa-calendar-check text-xl"></i>
+                </div>
+                <div>
+                    <div class="text-[11px] font-extrabold uppercase tracking-widest text-terracotta dark:text-peach">
+                        DAILY EXAM COUNTDOWN
+                    </div>
+                    <div id="countdownMainText" class="text-lg sm:text-2xl font-black text-stone-900 dark:text-white leading-snug">
+                        72th BPSC Prelims — 54 din shesh hai
+                    </div>
+                    <div id="countdownTargetDateText" class="text-xs font-semibold text-stone-500 dark:text-stone-400 mt-0.5">
+                        Target Date: 17 Jan 2027
+                    </div>
+                </div>
+            </div>
+
+            <button onclick="openCountdownModal()" class="px-4 py-2 rounded-xl text-xs font-bold border border-peach dark:border-darkborder bg-sand/70 dark:bg-stone-800 hover:bg-terracotta hover:text-white dark:hover:bg-terracotta text-stone-700 dark:text-stone-200 transition-colors flex items-center gap-1.5 flex-shrink-0">
+                <i class="fa-solid fa-calendar-days"></i> Set Exam Date
+            </button>
+        </div>
+
         <!-- Action Bar: Add Topic, Add Subject, Filters -->
         <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-sand/60 dark:bg-darkcard p-4 rounded-xl border border-peach dark:border-darkborder">
             <div class="flex items-center gap-2 flex-wrap">
@@ -221,10 +259,6 @@
                 <select id="subjectFilter" onchange="applyFilters()" class="text-xs font-semibold px-3 py-2 rounded-lg border border-peach dark:border-darkborder bg-cream dark:bg-stone-900 text-stone-800 dark:text-stone-200 focus:outline-none focus:ring-2 focus:ring-terracotta max-w-[200px]">
                     <option value="all">All Subjects</option>
                 </select>
-
-                <span class="text-xs text-stone-500 dark:text-stone-400 hidden xl:inline">
-                    <i class="fa-solid fa-circle-info mr-1"></i>Tap check for status | Edit topic name with pencil icon
-                </span>
             </div>
 
             <!-- Subject & Topic Action Buttons -->
@@ -239,11 +273,50 @@
         </div>
 
         <!-- Subjects & Topics Container -->
-        <div id="subjectsListContainer" class="space-y-5">
+        <div id="subjectsListContainer" class="space-y-6">
             <!-- Dynamically populated -->
         </div>
 
     </main>
+
+    <!-- Modal: Edit Countdown Date -->
+    <div id="countdownModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-cream dark:bg-darkcard border border-peach dark:border-darkborder rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
+            <div class="flex items-center justify-between border-b border-peach/50 dark:border-darkborder pb-3">
+                <h3 class="text-base font-extrabold text-stone-900 dark:text-white flex items-center gap-2">
+                    <i class="fa-solid fa-calendar-check text-terracotta"></i> Set Target Exam Countdown
+                </h3>
+                <button onclick="closeCountdownModal()" class="text-stone-400 hover:text-stone-600 dark:hover:text-white">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-stone-500 dark:text-stone-400 mb-1">
+                    Exam Title (e.g. 72th BPSC Prelims)
+                </label>
+                <input type="text" id="countdownLabelInput"
+                    class="w-full text-sm font-semibold p-3 rounded-lg border border-peach dark:border-darkborder bg-white dark:bg-stone-900 text-stone-800 dark:text-stone-100 focus:outline-none focus:ring-2 focus:ring-terracotta">
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-stone-500 dark:text-stone-400 mb-1">
+                    Exam Date
+                </label>
+                <input type="date" id="countdownDateInput"
+                    class="w-full text-sm font-semibold p-3 rounded-lg border border-peach dark:border-darkborder bg-white dark:bg-stone-900 text-stone-800 dark:text-stone-100 focus:outline-none focus:ring-2 focus:ring-terracotta">
+            </div>
+
+            <div class="flex items-center justify-end gap-2 pt-2">
+                <button onclick="closeCountdownModal()" class="px-4 py-2 rounded-lg text-xs font-bold text-stone-600 dark:text-stone-400 hover:bg-sand dark:hover:bg-darkborder">
+                    Cancel
+                </button>
+                <button onclick="saveCountdownSettings()" class="px-5 py-2 rounded-lg text-xs font-bold bg-terracotta hover:bg-terracotta-hover text-white shadow-md">
+                    Save Countdown
+                </button>
+            </div>
+        </div>
+    </div>
 
     <!-- Modal: Subject Management -->
     <div id="subjectModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
@@ -420,7 +493,21 @@
     <!-- Application Script -->
     <script>
         const STORAGE_KEY = 'syllabus_tracker_v4_data';
+        const COUNTDOWN_KEY = 'syllabus_tracker_countdowns_v1';
         const THEME_KEY = 'syllabus_tracker_theme';
+
+        const defaultCountdowns = {
+            upsc_tier1: { label: "UPSC CSE Prelims 2027", date: "2027-05-23" },
+            upsc_tier2: { label: "UPSC CSE Mains 2027", date: "2027-08-20" },
+            bpsc_tier1: { label: "72th BPSC Prelims", date: "2027-01-17" },
+            bpsc_tier2: { label: "72th BPSC Mains", date: "2027-03-15" },
+            psir_tier1: { label: "PSIR Optional Paper 1", date: "2027-08-22" },
+            psir_tier2: { label: "PSIR Optional Paper 2", date: "2027-08-22" },
+            ugc_tier1:  { label: "UGC NET Paper 1", date: "2027-06-15" },
+            ugc_tier2:  { label: "UGC NET Political Science", date: "2027-06-15" },
+            ca_tier1:   { label: "Current Affairs Target (72th BPSC)", date: "2027-01-17" },
+            csat_tier1: { label: "UPSC CSAT 2027", date: "2027-05-23" }
+        };
 
         const defaultData = {
             upsc: {
@@ -695,6 +782,7 @@
         };
 
         let appData = {};
+        let countdownData = {};
         let currentSectionKey = 'upsc';
         let currentSubTier = 'tier1';
         let activePrioritySelect = 'high';
@@ -703,10 +791,11 @@
         function initApp() {
             loadTheme();
             loadAppData();
+            loadCountdownData();
             renderCurrentView();
 
             if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.register('./sw.js?v=102')
+                navigator.serviceWorker.register('./sw.js?v=103')
                     .then((reg) => console.log('SW Registered', reg))
                     .catch((err) => console.log('SW Registration failed', err));
             }
@@ -739,6 +828,93 @@
                     icon.classList.add('fa-expand');
                 }
             }
+        }
+
+        function loadCountdownData() {
+            const saved = localStorage.getItem(COUNTDOWN_KEY);
+            if (saved) {
+                try {
+                    countdownData = { ...defaultCountdowns, ...JSON.parse(saved) };
+                } catch(e) {
+                    countdownData = JSON.parse(JSON.stringify(defaultCountdowns));
+                }
+            } else {
+                countdownData = JSON.parse(JSON.stringify(defaultCountdowns));
+            }
+        }
+
+        function saveCountdownData() {
+            localStorage.setItem(COUNTDOWN_KEY, JSON.stringify(countdownData));
+        }
+
+        function getActiveCountdownKey() {
+            const sec = appData[currentSectionKey];
+            if (sec && sec.hasSubTiers) {
+                return `${currentSectionKey}_${currentSubTier}`;
+            }
+            return `${currentSectionKey}_tier1`;
+        }
+
+        function formatDisplayDate(isoStr) {
+            if (!isoStr) return "Select Date";
+            const parts = isoStr.split('-');
+            if (parts.length !== 3) return isoStr;
+            const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+            const day = parts[2];
+            const month = months[parseInt(parts[1], 10) - 1] || parts[1];
+            const year = parts[0].slice(2);
+            return `${day} ${month} ${year}`;
+        }
+
+        function renderCountdownBanner() {
+            const key = getActiveCountdownKey();
+            const item = countdownData[key] || { label: appData[currentSectionKey].title, date: "2027-01-17" };
+
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            const target = new Date(item.date + "T00:00:00");
+            const diffTime = target.getTime() - today.getTime();
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+            const mainTextEl = document.getElementById('countdownMainText');
+            const targetDateEl = document.getElementById('countdownTargetDateText');
+
+            if (diffDays > 0) {
+                mainTextEl.innerHTML = `${item.label} — <span class="text-terracotta dark:text-peach underline decoration-peach decoration-2 underline-offset-4">${diffDays} din shesh hai</span>`;
+            } else if (diffDays === 0) {
+                mainTextEl.innerHTML = `${item.label} — <span class="text-emerald-600">Aaj Exam Hai! Best of Luck!</span>`;
+            } else {
+                mainTextEl.innerHTML = `${item.label} — <span class="text-stone-500">Exam Completed (${Math.abs(diffDays)} din pehle)</span>`;
+            }
+
+            targetDateEl.innerText = `Target Date: ${formatDisplayDate(item.date)}`;
+        }
+
+        function openCountdownModal() {
+            const key = getActiveCountdownKey();
+            const item = countdownData[key] || { label: "", date: "" };
+            document.getElementById('countdownLabelInput').value = item.label;
+            document.getElementById('countdownDateInput').value = item.date;
+            document.getElementById('countdownModal').classList.remove('hidden');
+        }
+
+        function closeCountdownModal() {
+            document.getElementById('countdownModal').classList.add('hidden');
+        }
+
+        function saveCountdownSettings() {
+            const label = document.getElementById('countdownLabelInput').value.trim();
+            const date = document.getElementById('countdownDateInput').value;
+            if (!label || !date) {
+                alert("Please enter both exam title and date.");
+                return;
+            }
+            const key = getActiveCountdownKey();
+            countdownData[key] = { label, date };
+            saveCountdownData();
+            closeCountdownModal();
+            renderCountdownBanner();
         }
 
         function loadAppData() {
@@ -867,6 +1043,8 @@
                 if (addSubBtnText) addSubBtnText.innerText = "Add Subject";
             }
 
+            renderCountdownBanner();
+
             const subjects = getActiveSubjectsList();
             populateSubjectFilter(subjects);
             renderSubjectsList(subjects);
@@ -922,22 +1100,22 @@
                     return matchesSearch && matchesStatus && matchesPriority;
                 });
 
-                const subCard = document.createElement('div');
-                subCard.className = "bg-white dark:bg-darkcard rounded-2xl border border-peach dark:border-darkborder p-5 sm:p-6 shadow-sm transition-all";
+                const subSection = document.createElement('div');
+                subSection.className = "bg-sand/50 dark:bg-darkcard/70 rounded-2xl border border-peach dark:border-darkborder p-4 sm:p-6 shadow-sm space-y-4";
 
                 const totalInSub = (subject.topics || []).length;
                 const completedInSub = (subject.topics || []).filter(t => t.status === 'completed').length;
                 const inProgressInSub = (subject.topics || []).filter(t => t.status === 'in-progress').length;
                 const subScore = totalInSub > 0 ? Math.round(((completedInSub + inProgressInSub * 0.5) / totalInSub) * 100) : 0;
 
-                subCard.innerHTML = `
-                    <div class="flex items-center justify-between pb-4 border-b border-peach/50 dark:border-darkborder mb-4 flex-wrap gap-2">
+                subSection.innerHTML = `
+                    <div class="flex items-center justify-between pb-3 border-b border-peach/70 dark:border-darkborder flex-wrap gap-2">
                         <div class="flex items-center gap-3 min-w-0">
                             <span class="w-3.5 h-3.5 rounded-full bg-terracotta flex-shrink-0 shadow-sm shadow-terracotta/50"></span>
                             <h3 class="text-lg sm:text-2xl font-black text-stone-900 dark:text-white tracking-tight truncate">${subject.name}</h3>
                         </div>
                         <div class="flex items-center gap-3 sm:gap-4 flex-shrink-0">
-                            <span class="text-base sm:text-lg font-black text-terracotta dark:text-peach bg-terracotta-light/60 dark:bg-stone-900 px-4 py-1.5 rounded-xl border border-peach dark:border-darkborder shadow-sm">
+                            <span class="text-base sm:text-lg font-black text-terracotta dark:text-peach bg-white dark:bg-stone-900 px-4 py-1.5 rounded-xl border border-peach dark:border-darkborder shadow-sm">
                                 ${subScore}%
                             </span>
                             <button onclick="openAddTopicModal('${subject.id}')" title="Add topic to this subject"
@@ -957,119 +1135,132 @@
                 `;
 
                 const topicListDiv = document.createElement('div');
-                topicListDiv.className = "space-y-3";
+                topicListDiv.className = "space-y-3.5";
 
                 if (filteredTopics.length === 0) {
-                    topicListDiv.innerHTML = `<div class="text-xs text-stone-400 py-3 text-center italic">No topics matching current filters.</div>`;
+                    topicListDiv.innerHTML = `<div class="text-xs text-stone-400 py-4 text-center italic bg-white dark:bg-stone-900 rounded-xl">No topics matching current filters.</div>`;
                 } else {
-                    filteredTopics.forEach(topic => {
-                        const row = createTopicRowElement(subject.id, topic);
+                    filteredTopics.forEach((topic, idx) => {
+                        const row = createTopicRowElement(subject.id, subject.name, topic, idx + 1);
                         topicListDiv.appendChild(row);
                     });
                 }
 
-                subCard.appendChild(topicListDiv);
-                container.appendChild(subCard);
+                subSection.appendChild(topicListDiv);
+                container.appendChild(subSection);
             });
         }
 
-        function createTopicRowElement(subjectId, topic) {
-            const div = document.createElement('div');
-            
+        function createTopicRowElement(subjectId, subjectName, topic, indexNumber) {
+            const card = document.createElement('div');
+            const numStr = String(indexNumber).padStart(2, '0');
+
+            // Priority pill style matching reference screenshot
             const priConfig = {
-                high: { label: "HIGH", bg: "bg-rose-50 text-rose-600 dark:bg-rose-950/50 dark:text-rose-300 border-rose-300 dark:border-rose-900 font-bold" },
-                medium: { label: "MED", bg: "bg-amber-50 text-amber-600 dark:bg-amber-950/50 dark:text-amber-300 border-amber-300 dark:border-amber-900 font-bold" },
-                low: { label: "LOW", bg: "bg-stone-100 text-stone-500 dark:bg-stone-800 dark:text-stone-400 border-peach dark:border-darkborder font-bold" }
+                high: {
+                    label: "HIGH",
+                    cls: "bg-rose-50 text-rose-700 border-rose-300 dark:bg-rose-950/50 dark:text-rose-300 dark:border-rose-800"
+                },
+                medium: {
+                    label: "MEDIUM",
+                    cls: "bg-amber-50 text-amber-800 border-amber-300 dark:bg-amber-950/50 dark:text-amber-300 dark:border-amber-800"
+                },
+                low: {
+                    label: "LOW",
+                    cls: "bg-sky-50 text-sky-700 border-sky-300 dark:bg-sky-950/50 dark:text-sky-300 dark:border-sky-800"
+                }
             }[topic.priority || 'medium'];
 
-            let statusBadge = '';
-            let checkIcon = '';
-            let textClass = 'text-stone-800 dark:text-stone-100 font-semibold text-sm sm:text-base md:text-lg';
-            let cardClass = 'bg-cream/90 hover:bg-sand/80 dark:bg-stone-900/40 dark:hover:bg-stone-900/80 border-peach/80 dark:border-darkborder';
-
+            // Status button matching reference screenshot
+            let statusBtnHTML = '';
+            let titleExtraClass = 'text-stone-900 dark:text-white';
             if (topic.status === 'completed') {
-                statusBadge = `
-                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-emerald-500 text-white font-black text-xs sm:text-sm uppercase tracking-wider shadow-sm shadow-emerald-500/30">
-                        <i class="fa-solid fa-check text-xs"></i> Done
-                    </span>`;
-                checkIcon = `
-                    <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-gradient-to-tr from-emerald-600 to-green-500 text-white flex items-center justify-center text-sm sm:text-base shadow-md shadow-emerald-500/30 ring-2 ring-emerald-400/30 flex-shrink-0 cursor-pointer">
-                        <i class="fa-solid fa-check"></i>
-                    </div>`;
-                textClass = 'line-through text-stone-400 dark:text-stone-500 font-semibold text-sm sm:text-base md:text-lg';
-                cardClass = 'bg-emerald-50/60 dark:bg-emerald-950/20 border-emerald-300 dark:border-emerald-800/60 shadow-sm';
+                statusBtnHTML = `
+                    <button onclick="cycleTopicStatus('${subjectId}', '${topic.id}')"
+                        class="px-3.5 py-2 rounded-xl bg-emerald-100 hover:bg-emerald-200 dark:bg-emerald-900/50 text-emerald-800 dark:text-emerald-200 font-bold text-xs sm:text-sm transition-colors">
+                        Done
+                    </button>`;
+                titleExtraClass = 'line-through text-stone-400 dark:text-stone-500';
             } else if (topic.status === 'in-progress') {
-                statusBadge = `
-                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-gradient-to-r from-amber-500 to-yellow-500 text-white font-black text-xs sm:text-sm uppercase tracking-wider shadow-sm shadow-amber-500/30 animate-pulse">
-                        <i class="fa-solid fa-hourglass-half text-xs"></i> Progress
-                    </span>`;
-                checkIcon = `
-                    <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-gradient-to-tr from-amber-500 to-yellow-400 text-white flex items-center justify-center text-xs sm:text-sm shadow-md shadow-amber-500/40 ring-2 ring-amber-400/40 flex-shrink-0 cursor-pointer">
-                        <i class="fa-solid fa-hourglass-half"></i>
-                    </div>`;
-                cardClass = 'bg-amber-50/70 dark:bg-amber-950/30 border-amber-300 dark:border-amber-700/60 shadow-sm';
+                statusBtnHTML = `
+                    <button onclick="cycleTopicStatus('${subjectId}', '${topic.id}')"
+                        class="px-3.5 py-2 rounded-xl bg-amber-100 hover:bg-amber-200 dark:bg-amber-900/50 text-amber-800 dark:text-amber-200 font-bold text-xs sm:text-sm transition-colors">
+                        Progress
+                    </button>`;
             } else {
-                statusBadge = `
-                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-sand dark:bg-stone-800 text-stone-600 dark:text-stone-300 font-bold text-xs sm:text-sm uppercase tracking-wider border border-peach/50 dark:border-darkborder">
+                statusBtnHTML = `
+                    <button onclick="cycleTopicStatus('${subjectId}', '${topic.id}')"
+                        class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-stone-800 text-slate-600 dark:text-stone-300 font-bold text-xs sm:text-sm transition-colors">
                         Pending
-                    </span>`;
-                checkIcon = `
-                    <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl border-2 border-dashed border-peach dark:border-stone-600 hover:border-terracotta flex items-center justify-center flex-shrink-0 bg-white/70 dark:bg-stone-800/50 cursor-pointer">
-                        <span class="w-2 h-2 rounded-full bg-peach dark:bg-stone-600"></span>
-                    </div>`;
+                    </button>`;
             }
 
-            div.className = `flex flex-col lg:flex-row lg:items-center justify-between p-3.5 sm:p-4 rounded-xl border ${cardClass} transition-all gap-3 select-none hover:shadow-sm`;
-            
-            div.innerHTML = `
-                <!-- Left: Status Check & Topic Title -->
-                <div class="flex items-center gap-3.5 flex-1 min-w-0">
-                    <div onclick="cycleTopicStatus('${subjectId}', '${topic.id}')">${checkIcon}</div>
-                    <span onclick="cycleTopicStatus('${subjectId}', '${topic.id}')" class="${textClass} cursor-pointer break-words leading-relaxed">${topic.text}</span>
+            const lastStudiedDisplay = formatDisplayDate(topic.lastStudied);
+            const nextRevisionDisplay = formatDisplayDate(topic.nextRevision);
+
+            // Pure white card background with big readable typography matching photo
+            card.className = "bg-white dark:bg-stone-900 rounded-2xl p-4 sm:p-5 border border-peach/80 dark:border-darkborder shadow-sm hover:shadow-md transition-all flex items-start sm:items-center justify-between gap-3 sm:gap-4";
+
+            card.innerHTML = `
+                <!-- Left: Yellow Number Box -->
+                <div onclick="cycleTopicStatus('${subjectId}', '${topic.id}')" title="Tap to change status"
+                    class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-amber-300 dark:bg-amber-500/80 text-stone-900 font-black text-lg sm:text-xl flex items-center justify-center flex-shrink-0 cursor-pointer select-none shadow-xs">
+                    ${numStr}
                 </div>
 
-                <!-- Right: Date Pickers, Priority, Status, Edit & Delete -->
-                <div class="flex flex-wrap items-center gap-2 sm:gap-3 flex-shrink-0 self-end lg:self-center">
-                    
-                    <!-- Last Studied Calendar (Always Green) -->
-                    <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-emerald-400 dark:border-emerald-600 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 text-xs shadow-xs" title="Last Studied Date">
-                        <i class="fa-solid fa-clock-rotate-left text-emerald-600 dark:text-emerald-400 text-[11px]"></i>
-                        <span class="text-[10px] uppercase font-bold text-emerald-700 dark:text-emerald-300">Last Studied:</span>
-                        <input type="date" value="${topic.lastStudied || ''}" 
-                            onchange="updateTopicDate('${subjectId}', '${topic.id}', 'lastStudied', this.value)"
-                            class="bg-transparent text-emerald-800 dark:text-emerald-200 text-xs font-semibold focus:outline-none cursor-pointer">
+                <!-- Middle: Giant Topic Title + Subject Subtitle + 3 Bottom Badges -->
+                <div class="flex-1 min-w-0 space-y-1.5">
+                    <div onclick="cycleTopicStatus('${subjectId}', '${topic.id}')"
+                        class="${titleExtraClass} text-lg sm:text-xl md:text-2xl font-extrabold leading-snug break-words cursor-pointer">
+                        ${topic.text}
                     </div>
 
-                    <!-- Next Revision Calendar (Always Red) -->
-                    <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-rose-400 dark:border-rose-600 bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 text-xs shadow-xs" title="Next Revision Date">
-                        <i class="fa-solid fa-calendar-day text-rose-600 dark:text-rose-400 text-[11px]"></i>
-                        <span class="text-[10px] uppercase font-bold text-rose-700 dark:text-rose-300">Next Revision:</span>
-                        <input type="date" value="${topic.nextRevision || ''}" 
-                            onchange="updateTopicDate('${subjectId}', '${topic.id}', 'nextRevision', this.value)"
-                            class="bg-transparent text-rose-800 dark:text-rose-200 text-xs font-semibold focus:outline-none cursor-pointer">
+                    <div class="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-500 dark:text-stone-400 truncate">
+                        ${subjectName}
                     </div>
 
-                    <!-- Priority Badge -->
-                    <span class="text-[11px] sm:text-xs font-black px-2.5 py-1 rounded-lg border ${priConfig.bg}">${priConfig.label}</span>
-                    
-                    <!-- Status Button -->
-                    <div class="cursor-pointer" onclick="cycleTopicStatus('${subjectId}', '${topic.id}')">${statusBadge}</div>
-                    
-                    <!-- Edit Topic Name Button -->
-                    <button onclick="openEditTopicModal('${subjectId}', '${topic.id}')" title="Edit Topic Title"
-                        class="text-stone-400 hover:text-terracotta dark:hover:text-peach p-1.5 ml-0.5 text-sm sm:text-base transition-colors">
-                        <i class="fa-solid fa-pencil"></i>
+                    <!-- Bottom Pills Row: Priority + Last Studied (Green) + Next Revision (Red) -->
+                    <div class="flex flex-wrap items-center gap-2 pt-1">
+                        <!-- Priority Pill -->
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg border text-xs font-extrabold ${priConfig.cls}">
+                            <i class="fa-solid fa-flag text-[10px] text-rose-500"></i> ${priConfig.label}
+                        </span>
+
+                        <!-- Last Studied Pill (Always Green) -->
+                        <div class="date-pill-wrapper px-3 py-1 rounded-lg border border-emerald-400 dark:border-emerald-600 bg-emerald-50 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-200 text-xs font-bold shadow-2xs">
+                            <i class="fa-solid fa-calendar-check text-emerald-600 dark:text-emerald-400 mr-1.5"></i>
+                            <span>Last Studied: ${lastStudiedDisplay}</span>
+                            <input type="date" value="${topic.lastStudied || ''}"
+                                onchange="updateTopicDate('${subjectId}', '${topic.id}', 'lastStudied', this.value)">
+                        </div>
+
+                        <!-- Next Revision Pill (Always Red) -->
+                        <div class="date-pill-wrapper px-3 py-1 rounded-lg border border-rose-400 dark:border-rose-600 bg-rose-50 dark:bg-rose-950/50 text-rose-700 dark:text-rose-200 text-xs font-bold shadow-2xs">
+                            <i class="fa-solid fa-clock-rotate-left text-rose-600 dark:text-rose-400 mr-1.5"></i>
+                            <span>Next Revision: ${nextRevisionDisplay}</span>
+                            <input type="date" value="${topic.nextRevision || ''}"
+                                onchange="updateTopicDate('${subjectId}', '${topic.id}', 'nextRevision', this.value)">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Status Button + Edit Pencil + Delete Cross -->
+                <div class="flex items-center gap-1.5 sm:gap-2 flex-shrink-0 self-center">
+                    ${statusBtnHTML}
+
+                    <button onclick="openEditTopicModal('${subjectId}', '${topic.id}')" title="Edit Topic"
+                        class="w-9 h-9 rounded-xl bg-amber-50 hover:bg-amber-100 dark:bg-stone-800 text-amber-600 dark:text-amber-400 flex items-center justify-center transition-colors">
+                        <i class="fa-solid fa-pencil text-xs sm:text-sm"></i>
                     </button>
 
-                    <!-- Delete Button -->
                     <button onclick="deleteTopic('${subjectId}', '${topic.id}')" title="Delete Topic"
-                        class="text-stone-400 hover:text-rose-500 dark:hover:text-rose-400 p-1.5 ml-0.5 text-sm sm:text-base transition-colors">
-                        <i class="fa-solid fa-trash-can"></i>
+                        class="w-9 h-9 rounded-xl bg-rose-50 hover:bg-rose-100 dark:bg-stone-800 text-rose-500 dark:text-rose-400 flex items-center justify-center transition-colors">
+                        <i class="fa-solid fa-xmark text-sm sm:text-base"></i>
                     </button>
                 </div>
             `;
 
-            return div;
+            return card;
         }
 
         function openEditTopicModal(subjectId, topicId) {
